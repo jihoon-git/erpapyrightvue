@@ -21,7 +21,7 @@
     </span>
   </p>
   <div align="right">
-    <a class="btnType blue" @click="javascript: fn_openpopup();" name="modal"
+    <a class="btnType blue" @click="fn_openpopup()" name="modal"
       ><span>등록</span></a
     >
   </div>
