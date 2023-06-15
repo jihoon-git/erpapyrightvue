@@ -7,23 +7,22 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import HelloWorld from '@/components/HelloWorld.vue';
 
 export default {
-  name: "Home",
+  name: 'Home',
   components: {
     HelloWorld,
   },
-  create:function(){
+  create: function () {
     console.log('home initiate');
-  }
+  },
 };
 </script>
 
 <style>
-
-  #homeContent{
-    text-align: center;
-    padding:40px;
-  }
+#homeContent {
+  text-align: center;
+  padding: 40px;
+}
 </style>
