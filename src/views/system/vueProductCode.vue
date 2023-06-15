@@ -53,7 +53,7 @@
           v-for="list in prodlist"
           :key="list.detail_code"
         >
-          <tr @click="grpdetail(list.detail_code)">
+          <tr>
             <!-- 
             <td>
               <a href="javascript:fn_detailone('${list.detail_code}')"
@@ -69,19 +69,19 @@
     </table>
   </div>
   <div class="paging_area" id="prodPagination">
-    <!-- <paginate
+    <paginate
       class="justify-content-center"
-      v-model="currentPage2"
-      :page-count="page2()"
+      v-model="currentPage"
+      :page-count="totalPage"
       :page-range="5"
       :margin-pages="0"
-      :click-handler="changePage"
+      :click-handler="clickCallback"
       :prev-text="'Prev'"
       :next-text="'Next'"
       :container-class="'pagination'"
       :page-class="'page-item'"
     >
-    </paginate> -->
+    </paginate>
   </div>
 </template>
 <script>
@@ -90,13 +90,15 @@ import { vuecombiListAxios } from '../system';
 export default {
   data: function () {
     return {
+      currentPage: 1,
       pageSize: 5,
+      totalPage: 1,
       pageBlockSize: 5,
       prodlist: [],
-      prodlistcnt: '',
-      prodPagination: '',
+      grdNo: 1,
+
       searchname: '',
-      clickBtn: '',
+      //   clickBtn: '',
     };
   },
   computed: {},
@@ -108,29 +110,57 @@ export default {
   },
   methods: {
     //제품대분류 관리 초기화면
-    searchproduct: function (cpage) {
-      cpage = cpage || 1; //현재 page가 undefied면 1로 셋팅
-
-      const vm = this; //axios에서 this인식x
+    searchproduct: function () {
+      let vm = this; //axios에서 this인식x
       let params = new URLSearchParams();
       //params.append('searchname', searchname);
+      params.append('cpage', this.currentPage);
       params.append('pageSize', this.pageSize);
-      params.append('cpage', cpage);
+      params.append('searchname', this.searchname);
+
       vuecombiListAxios('/system/vueProductCodeList.do', params)
         .then(function (response) {
+          //데이터갯수
+          vm.totalCnt = response.data.countproductlist;
+          //데이터리스트
           vm.prodlist = response.data.productCodelist;
-          vm.prodlistcnt = response.data.countproductlist;
-          console.log(response);
+          vm.totalPage = vm.page();
+
+          console.log('searchproduct response : ' + JSON.stringify(response));
+          console.log('searchproduct totalPage : ' + vm.totalPage);
+
+          vm.currentPage == 1
+            ? (vm.grdNo = 1)
+            : (vm.grdNo = 5 * (vm.currentPage - 1) + 1);
+
+          for (let value of vm.prodlist) {
+            value.indexNew = vm.grdNo++;
+          }
         })
         .catch(function (error) {
           alert('에러! API 요청에 오류가 있습니다. ' + error);
         });
     },
-    grpdetail: function (detail_code) {
-      console.log('grpdetail detail_code : ' + detail_code);
+
+    clickCallback: function (pageNum) {
+      console.log('clickCallback pageNum : ' + pageNum);
+
+      this.currentPage = pageNum;
+      //this.Paginate.pageNum = 10;
+      this.searchproduct();
     },
-    changePage: function (pageNum) {
-      this.selectPage = pageNum;
+    page: function () {
+      var total = this.totalPage;
+      var page = this.pageSize;
+      var xx = total % page;
+      var result = parseInt(total / page);
+
+      if (xx == 0) {
+        return result;
+      } else {
+        result = result + 1;
+        return result;
+      }
     },
   },
 };
