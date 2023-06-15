@@ -76,20 +76,20 @@
 
 <script>
 //import Dashboard from "@/views/Dashboard.vue";
-import "../assets/css/admin/login.css";
+import '../assets/css/admin/login.css';
 // import "../assets/js/common.js";
 export default {
   data: function () {
     return {
-      lgn_Id: "",
-      pwd: "",
+      lgn_Id: '',
+      pwd: '',
       saveId: false,
     };
   },
   mounted: function () {
-    let savedID = this.getCookie("EMP_ID");
-    this.lgn_Id = savedID || "";
-    this.savedID = savedID != "" ? true : false;
+    let savedID = this.getCookie('EMP_ID');
+    this.lgn_Id = savedID || '';
+    this.savedID = savedID != '' ? true : false;
   },
   methods: {
     // Vue 공식 홈페이지에 있는 방식으로는 ()=>{} 화살표 함수형식으로의 작성을
@@ -104,48 +104,48 @@ export default {
       if (this.isValidated()) {
         let vm = this;
 
-        console.log("Proc login,,,");
-        this.saveCookie("EMP_ID", this.lgn_Id, this.saveId == true ? 7 : -1);
+        console.log('Proc login,,,');
+        this.saveCookie('EMP_ID', this.lgn_Id, this.saveId == true ? 7 : -1);
 
         this.axios
           .post(
-            "/loginProc.do",
+            '/loginProc.do',
             new URLSearchParams({ lgn_Id: this.lgn_Id, pwd: this.pwd })
           )
           .then((resp) => {
             let data = resp.data;
-            if (data.result == "SUCCESS") {
-              this.$store.commit("logged", {
+            if (data.result == 'SUCCESS') {
+              this.$store.commit('logged', {
                 loginId: data.loginId,
                 userNm: data.userNm,
                 userType: data.userType,
                 serverName: data.serverName,
                 usrMnuAtrt: data.usrMnuAtrt,
               });
-              this.$store.commit("auth", { type: data.userType });
+              this.$store.commit('auth', { type: data.userType });
 
               // guide for making vue files
               data.usrMnuAtrt.forEach(function (item) {
                 console.log(item.mnu_nm);
                 item.nodeList.forEach(function (item) {
-                  let purl = item.mnu_url.replace(".do", ".vue");
-                  let vueFilePath = "@/views" + purl;
+                  let purl = item.mnu_url.replace('.do', '.vue');
+                  let vueFilePath = '@/views' + purl;
                   console.log(
-                    "  메뉴명: " + item.mnu_nm + " || 파일경로 : " + vueFilePath
+                    '  메뉴명: ' + item.mnu_nm + ' || 파일경로 : ' + vueFilePath
                   );
                 });
               });
               ////////////////////////////////
 
-              this.$session.set("loginId", resp.data.loginId);
-              this.$session.set("userNm", resp.data.userNm);
-              this.$session.set("userType", resp.data.userType);
-              this.$session.set("serverName", resp.data.serverName);
-              this.$session.set("usrMnuAtrt", resp.data.usrMnuAtrt);
+              this.$session.set('loginId', resp.data.loginId);
+              this.$session.set('userNm', resp.data.userNm);
+              this.$session.set('userType', resp.data.userType);
+              this.$session.set('serverName', resp.data.serverName);
+              this.$session.set('usrMnuAtrt', resp.data.usrMnuAtrt);
 
-              vm.$router.push("/dashboard/home");
+              vm.$router.push('/dashboard/home');
             } else {
-              alert("ID 혹은 비밀번호가 틀립니다");
+              alert('ID 혹은 비밀번호가 틀립니다');
             }
           })
           .catch((error) => {
@@ -155,15 +155,15 @@ export default {
     },
     isValidated: function () {
       let chk = this.checkNotEmpty([
-        ["EMP_ID", "아이디를 입력해 주세요."],
-        ["EMP_PWD", "비밀번호를 입력해 주세요."],
+        ['EMP_ID', '아이디를 입력해 주세요.'],
+        ['EMP_PWD', '비밀번호를 입력해 주세요.'],
       ]);
       return chk;
     },
     checkNotEmpty: function (arr) {
       for (var i = 0, len = arr.length; i < len; i++) {
         var elem = document.getElementById(arr[i][0]);
-        console.log("elem is...");
+        console.log('elem is...');
         console.log(elem);
         if (elem.length <= 0) {
           continue;
@@ -172,7 +172,7 @@ export default {
         var alertMsg = arr[i][1];
 
         console.log(elemValue);
-        if (elemValue == "") {
+        if (elemValue == '') {
           alert(alertMsg);
           elem.focus();
           return false;
@@ -184,18 +184,18 @@ export default {
       let today = new Date();
       today.setDate(today.getDate() + day);
       document.cookie =
-        nm + "=" + id + "; path=/; expires=" + today.toGMTString() + ";";
+        nm + '=' + id + '; path=/; expires=' + today.toGMTString() + ';';
     },
     getCookie: function (nm) {
       // userid 쿠키에서 id 값을 가져온다.
-      var cook = document.cookie + ";";
+      var cook = document.cookie + ';';
       var idx = cook.indexOf(nm, 0);
-      var val = "";
+      var val = '';
 
       if (idx != -1) {
         cook = cook.substring(idx, cook.length);
-        let begin = cook.indexOf("=", 0) + 1;
-        let end = cook.indexOf(";", begin);
+        let begin = cook.indexOf('=', 0) + 1;
+        let end = cook.indexOf(';', begin);
         val = unescape(cook.substring(begin, end));
       }
       return val;
