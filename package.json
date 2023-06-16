@@ -59,14 +59,7 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {
-      "prettier/prettier": [
-        "error",
-        {
-          "endOfLine": "auto"
-        }
-      ]
-    }
+    "rules": {}
   },
   "browserslist": [
     "> 1%",
