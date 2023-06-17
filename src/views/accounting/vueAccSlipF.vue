@@ -101,8 +101,8 @@
         <template v-else>
           <tbody
             id="accSlipFList"
-            v-for="item in accSlipFGrp"
-            :key="item.account_no"
+            v-for="(item, index) in accSlipFGrp"
+            :key="index"
           >
             <!-- 수주 -->
             <template
@@ -179,12 +179,26 @@
 
     <br />
     <br />
+    <!-- 수주 상세조회 컴포넌트 start -->
+    <vueAccSlipFConDet
+      v-if="conDetChk == true"
+      :conDetItem="conDetData"
+    ></vueAccSlipFConDet>
+    <!-- 수주 상세조회 컴포넌트 end -->
+    <!-- 지출 상세조회 컴포넌트 start -->
+    <vueAccSlipFExpDet
+      v-if="expDetChk == true"
+      :expDetItem="expDetData"
+    ></vueAccSlipFExpDet>
+    <!-- 지출 상세조회 컴포넌트 end -->
   </div>
 </template>
 <script>
 import clientSelectBox from '@/components/common/clientSelectBox.vue';
 import detileAccount from '@/components/common/detileAccount.vue';
 import Paginate from 'vuejs-paginate-next';
+import vueAccSlipFConDet from './vueAccSlipFConDet.vue';
+import vueAccSlipFExpDet from './vueAccSlipFExpDet.vue';
 
 export default {
   data: function () {
@@ -206,13 +220,30 @@ export default {
       pageSize: 5,
       pageBlockSize: 5,
       totalPage: 1,
+      conDetData: '',
+      expDetData: '',
+      conDetChk: false,
+      expDetChk: false,
     };
   },
   components: {
     clientSelectBox,
     detileAccount,
-    // eslint-disable-next-line vue/no-unused-components
     Paginate,
+    vueAccSlipFConDet,
+    vueAccSlipFExpDet,
+  },
+  watch: {
+    // conDetData(order_cd) {
+    //   this.conDetData = '';
+    //   console.log('여기오나요>');
+    //   console.log(order_cd);
+    //   console.log(this.expDetData);
+    //   this.conDetData = order_cd;
+    // },
+    // expDetData(exp_no) {
+    //   this.expDetData = exp_no;
+    // },
   },
   created() {},
   unmounted() {
@@ -220,6 +251,8 @@ export default {
     this.emitter.off('ComboEvent');
   },
   mounted() {
+    this.conDetChk = false;
+    this.expDetChk = false;
     this.accSlipFListSearch();
   },
   methods: {
@@ -247,6 +280,8 @@ export default {
       this.accSlipFListSearch();
     },
     accSlipFListSearch: function (cpage) {
+      this.conDetChk = false;
+      this.expDetChk = false;
       let vm = this;
       this.cpage = cpage || 1; // 현재 page가 undefined 면 1로 셋팅
 
@@ -274,6 +309,24 @@ export default {
         .catch(function (error) {
           alert('에러! API 요청에 오류가 있습니다. ' + error);
         });
+    },
+    vuefn_contractDetaile: function (order_cd) {
+      this.conDetChk = true;
+      this.expDetChk = false;
+      this.conDetData = '';
+      this.expDetData = '';
+      this.conDetData = order_cd;
+      console.log(order_cd);
+    },
+    vuefn_expDetaile: function (exp_no) {
+      this.expDetChk = true;
+      this.conDetChk = false;
+      this.expDetData = '';
+      this.conDetData = '';
+      this.expDetData = exp_no;
+      console.log(exp_no);
+      //   console.log(this.expDetData);
+      //   console.log('======================부모창');
     },
   },
 };
