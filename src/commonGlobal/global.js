@@ -4,10 +4,20 @@ const methods = {
   vuecombiListAxios(url, params) {
     return axios.post(url, params);
   },
+
+  /**
+   *
+   * @param {*} totalCnt 총 데이터 개수
+   * @param {*} pageSize  한 화면에 뿌려질 최대 데이터 개수
+   */
   page(totalCnt, pageSize) {
     var total = totalCnt;
     var page = pageSize;
+
+    // 만들어지고 남는 페이지 개수
     var xx = total % page;
+
+    // 총 만들어지는 페이지 개수
     var result = parseInt(total / page);
 
     if (xx == 0) {
@@ -17,9 +27,21 @@ const methods = {
       return result;
     }
   },
+
+  /**
+   *
+   * @param {*} val number
+   * @returns 천단위마다 콤마 찍기
+   */
   comma(val) {
     return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   },
+
+  /**
+   *
+   * @param {*} startDate 검색 시작일
+   * @param {*} endDate  검색 종료일
+   */
   checkStartEndDate(startDate, endDate) {
     if (startDate != '' && endDate != '') {
       if (startDate > endDate) {
@@ -29,6 +51,11 @@ const methods = {
     }
     return true;
   },
+
+  /**
+   *
+   * @param {*} searchNumber 숫자여부를 검사할 text
+   */
   checkEmpNumber(searchNumber) {
     const numbercheck = /^[0-9]*$/;
     if (searchNumber != '') {
@@ -39,6 +66,11 @@ const methods = {
     }
     return true;
   },
+
+  /**
+   *
+   * @param {*} searchLetter 문자 여부를 검사할 text
+   */
   checkEmpName(searchLetter) {
     const namecheck = /^[a-zA-Z가-힣]*$/;
     if (searchLetter != '') {
@@ -62,6 +94,11 @@ const methods = {
   // if (checkEmpName) {
   //   return checkEmpName;
   // }
+
+  /**
+   *
+   * @param {*} arr ['id', 'alert 창에 들어갈 메시지'] 형태(2차원배열)
+   */
   checkNotEmpty: function (arr) {
     for (var i = 0, len = arr.length; i < len; i++) {
       var elem = document.getElementById(arr[i][0]);
