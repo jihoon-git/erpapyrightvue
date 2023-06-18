@@ -58,7 +58,10 @@
 export default {
   props: { expDetItem: Number },
   watch: {
-    detExpNo() {
+    // watch로 부모창에서 보내오는 값의 변화를 감지
+    // 값이 바뀔 때마다 자식창의 detExpNo에 부모창의 expDetItem를 넣어주고
+    // 상세내역 조회 메서드 expDetaile() 실행
+    expDetItem() {
       this.detExpNo = this.expDetItem;
       this.expDetaile();
     },
@@ -69,7 +72,7 @@ export default {
       exDetaileList: [],
     };
   },
-  mounted() {
+  created() {
     this.detExpNo = this.expDetItem;
     // console.log('============= created');
     // console.log(this.expDetItem);
