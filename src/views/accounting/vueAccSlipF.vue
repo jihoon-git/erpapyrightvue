@@ -41,8 +41,8 @@
 
         계정과목
         <detileAccount
-          laccount_cd="0"
-          selectid="account_name"
+          laccount_cd=""
+          selectid="laccount_cd"
           type="all"
           selvalue=""
           eventid="ComboEvent"
@@ -205,13 +205,12 @@ export default {
     return {
       client_no: '',
       clientName: '',
-      laccount_cd: 0,
+      laccount_cd: '',
       account_cd: '',
       account_name: '',
       srcsdate: '',
       srcedate: '',
       searchKey: '',
-      searchVal: '',
 
       totalCnt: '',
       accSlipFGrp: [],

@@ -153,7 +153,12 @@
         </table>
 
         <div class="btn_areaC mt30">
-          <a href="" class="btnType gray" id="btnClose" name="btn"
+          <a
+            href=""
+            @click.prevent="close()"
+            class="btnType gray"
+            id="btnClose"
+            name="btn"
             ><span>취소</span></a
           >
         </div>
