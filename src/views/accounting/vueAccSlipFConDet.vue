@@ -66,6 +66,9 @@
 export default {
   props: { conDetItem: String },
   watch: {
+    // watch로 부모창에서 보내오는 값의 변화를 감지
+    // 값이 바뀔 때마다 자식창의 detOrderCd에 부모창의 conDetItem 넣어주고
+    // 상세내역 조회 메서드 contractDetaile() 실행
     conDetItem() {
       //   console.log('-----------');
       //   console.log('item changed');
@@ -81,9 +84,17 @@ export default {
       conDetaileList: [],
     };
   },
-  mounted() {
+  created() {
     this.detOrderCd = this.conDetItem;
     this.contractDetaile();
+  },
+  updated() {
+    // updated DOM이 재 렌더링 된 후 호출되는 라이프 사이클 훅
+    // 변경 된 후의 DOM을 이용해야 하는 처리를 할 때 사용하기 유용
+    // 무한루프에 빠질 수 있으니 주의
+    // 변수 하나가 바뀔 때마다 메소드를 실행하고 싶다면 watch를 쓰자
+    //this.detOrderCd = this.conDetItem;
+    //this.contractDetaile();
   },
   methods: {
     contractDetaile: function () {

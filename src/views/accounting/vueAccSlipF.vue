@@ -241,9 +241,6 @@ export default {
     //   console.log(this.expDetData);
     //   this.conDetData = order_cd;
     // },
-    // expDetData(exp_no) {
-    //   this.expDetData = exp_no;
-    // },
   },
   created() {},
   unmounted() {
@@ -251,8 +248,8 @@ export default {
     this.emitter.off('ComboEvent');
   },
   mounted() {
-    this.conDetChk = false;
-    this.expDetChk = false;
+    //mounted 훅에서는 $el에 접근할 수 있다. (created에서는 x)
+    //console.log('mounted', this.$el);
     this.accSlipFListSearch();
   },
   methods: {
@@ -313,16 +310,12 @@ export default {
     vuefn_contractDetaile: function (order_cd) {
       this.conDetChk = true;
       this.expDetChk = false;
-      this.conDetData = '';
-      this.expDetData = '';
       this.conDetData = order_cd;
       console.log(order_cd);
     },
     vuefn_expDetaile: function (exp_no) {
       this.expDetChk = true;
       this.conDetChk = false;
-      this.expDetData = '';
-      this.conDetData = '';
       this.expDetData = exp_no;
       console.log(exp_no);
       //   console.log(this.expDetData);
