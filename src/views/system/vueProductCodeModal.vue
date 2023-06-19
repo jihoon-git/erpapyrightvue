@@ -74,6 +74,9 @@
         </div>
       </dd>
     </dl>
+    <a href="" class="closePop" @click.prevent="modalClose"
+      ><span class="hidden">닫기</span></a
+    >
   </div>
 </template>
 <script>
@@ -141,6 +144,7 @@ export default {
     },
     //제품 대분류 관리 저장
     modalSave: function () {
+      let vm = this;
       let params = new URLSearchParams();
       if (this.isValidated()) {
         //대분류 등록시에는 mounted
@@ -165,7 +169,7 @@ export default {
                 );
               } else {
                 alert('저장 되었습니다');
-                this.modalClose();
+                closeModal(vm);
               }
               console.log('modalSave response ' + JSON.stringify(response));
             }
@@ -184,13 +188,9 @@ export default {
             }
           );
           alert('수정 되었습니다.');
-          this.modalClose();
+          closeModal(vm);
         }
       }
-
-      //모달 종료
-      this.modalDetail();
-      this.modalClose();
     },
     modalDelete: function () {
       let vm = this;
@@ -208,7 +208,6 @@ export default {
     /** 닫기 버튼  */
     modalClose: function () {
       let vm = this;
-      this.modalDetail();
       closeModal(vm);
     },
   },
