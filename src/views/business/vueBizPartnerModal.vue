@@ -155,7 +155,10 @@
         <!-- e : 여기에 내용입력 -->
 
         <div class="btn_areaC mt30">
-          <a href="" class="btnType blue" @click.prevent="modalSave"
+          <a
+            href=""
+            class="btnType blue"
+            @click.prevent="checkPermitNo(this.det_permit_no)"
             ><span>저장</span></a
           >
           <a
@@ -199,6 +202,9 @@ export default {
       det_manager_email: '',
       det_client_tel: '',
       det_fax_tel: '',
+
+      // 거래처 중복체크 결과를 담을 변수
+      pNumCheck: '',
     };
   },
   created() {
@@ -208,12 +214,34 @@ export default {
     console.log('created receiveClientNo ' + this.receiveClientNo);
   },
   mounted() {
-    if (this.receiveAction == 'U') {
-      this.modalDetail();
-    }
+    this.modalDetail();
   },
 
   methods: {
+    // 사업자번호 중복 검사를 실행하는 method
+    checkPermitNo: function (tmpPermitNo) {
+      let vm = this;
+      vm.pNumCheck = '';
+      if (this.receiveAction == 'I') {
+        let params = new URLSearchParams();
+        params.append('permit_no', tmpPermitNo);
+        this.$vuecombiListAxios('/business/checkPermitNo.do', params).then(
+          function (response) {
+            console.log('check permit number ' + JSON.stringify(response));
+            // 중복된 사업자 번호가 존재할 경우 1이상의 숫자가 반환된다
+            if (response.data == 0) {
+              vm.pNumCheck = 0;
+              vm.modalSave();
+            } else {
+              vm.pNumCheck = -1;
+              alert('중복된 사업자 번호가 존재합니다.');
+            }
+          }
+        );
+      } else {
+        vm.modalSave();
+      }
+    },
     //created로 받은 값으로 상세조회 띄우기
     modalDetail: function () {
       let vm = this;
@@ -334,58 +362,63 @@ export default {
         return false;
       }
 
-      let vm = this;
+      //let vm = this;
       let params = new URLSearchParams();
-      //   if (this.isValidated()) {
-      if (this.receiveAction == 'I') {
-        params.append('action', 'I');
+      if (this.isValidated()) {
+        if (this.receiveAction == 'I') {
+          params.append('action', 'I');
 
-        params.append('det_permit_no', this.det_permit_no);
-        params.append('det_client_name', this.det_client_name);
-        params.append('det_zip_code', this.det_zip_code);
-        params.append('det_addr', this.det_addr);
-        params.append('det_det_addr', this.det_det_addr);
-        params.append('det_manager_name', this.det_manager_name);
-        params.append('det_manager_hp', this.det_manager_hp);
-        params.append('det_client_tel', this.det_client_tel);
-        params.append('det_fax_tel', this.det_fax_tel);
-        params.append('det_manager_email', this.det_manager_email);
+          params.append('det_permit_no', this.det_permit_no);
+          params.append('det_client_name', this.det_client_name);
+          params.append('det_zip_code', this.det_zip_code);
+          params.append('det_addr', this.det_addr);
+          params.append('det_det_addr', this.det_det_addr);
+          params.append('det_manager_name', this.det_manager_name);
+          params.append('det_manager_hp', this.det_manager_hp);
+          params.append('det_client_tel', this.det_client_tel);
+          params.append('det_fax_tel', this.det_fax_tel);
+          params.append('det_manager_email', this.det_manager_email);
 
-        console.log('modalSave receiveAction params' + JSON.stringify(params));
-        this.$vuecombiListAxios('/business/clientsave.do', params).then(
-          function (response) {
-            console.log('modalSave response ' + JSON.stringify(response.data));
-          }
-        );
-        closeModal(vm);
-      } else if (this.receiveAction == 'U') {
-        //currentPage param?
-        params.append('action', 'U');
-        params.append('client_no', this.receiveClientNo);
-        params.append('det_permit_no', this.det_permit_no);
-        params.append('det_client_name', this.det_client_name);
-        params.append('det_zip_code', this.det_zip_code);
-        params.append('det_addr', this.det_addr);
-        params.append('det_det_addr', this.det_det_addr);
-        params.append('det_manager_name', this.det_manager_name);
-        params.append('det_manager_hp', this.det_manager_hp);
-        params.append('det_client_tel', this.det_client_tel);
-        params.append('det_fax_tel', this.det_fax_tel);
-        params.append('det_manager_email', this.det_manager_email);
+          console.log(
+            'modalSave receiveAction params' + JSON.stringify(params)
+          );
+          this.$vuecombiListAxios('/business/clientsave.do', params).then(
+            function (response) {
+              console.log(
+                'modalSave response ' + JSON.stringify(response.data)
+              );
+            }
+          );
+          alert('저장 되었습니다.');
+          closeModal();
+        } else if (this.receiveAction == 'U') {
+          //currentPage param?
+          params.append('action', 'U');
+          params.append('client_no', this.receiveClientNo);
+          params.append('det_permit_no', this.det_permit_no);
+          params.append('det_client_name', this.det_client_name);
+          params.append('det_zip_code', this.det_zip_code);
+          params.append('det_addr', this.det_addr);
+          params.append('det_det_addr', this.det_det_addr);
+          params.append('det_manager_name', this.det_manager_name);
+          params.append('det_manager_hp', this.det_manager_hp);
+          params.append('det_client_tel', this.det_client_tel);
+          params.append('det_fax_tel', this.det_fax_tel);
+          params.append('det_manager_email', this.det_manager_email);
 
-        console.log('modalSave params' + JSON.stringify(params));
-        this.$vuecombiListAxios('/business/clientsave.do', params).then(
-          function (response) {
-            console.log('modalUpdate response ' + JSON.stringify(response));
-          }
-        );
-        alert('수정 되었습니다.');
+          console.log('modalSave params' + JSON.stringify(params));
+          this.$vuecombiListAxios('/business/clientsave.do', params).then(
+            function (response) {
+              console.log('modalUpdate response ' + JSON.stringify(response));
+            }
+          );
+          alert('수정 되었습니다.');
 
-        closeModal(vm);
+          closeModal();
+        }
       }
     },
     modalDelete: function () {
-      let vm = this;
       let params = new URLSearchParams();
       params.append('action', 'D');
       params.append('client_no', this.client_no);
@@ -395,10 +428,9 @@ export default {
           console.log('modalDelete params ' + JSON.stringify(params));
         }
       );
-      closeModal(vm);
+      closeModal();
     },
     modalClose: function () {
-      //let vm = this;
       closeModal();
     },
   },
