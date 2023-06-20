@@ -26,7 +26,9 @@
         style="height: 25px"
         v-model="bpname"
       />
-      <a class="btnType blue" href=""><span>검색</span></a>
+      <a class="btnType blue" href="" @click.prevent="clientSearch(this.bpname)"
+        ><span>검색</span></a
+      >
     </span>
   </p>
   <div class="divComGrpCodList">
@@ -126,36 +128,61 @@ export default {
   },
   methods: {
     //초기 화면
-    clientSearch: function () {
+    clientSearch: function (bpname) {
       let vm = this;
       let params = new URLSearchParams();
 
       //'거래처명을입력해 주세요.'에 검색이 없을때
-      //if (bpname == null) {
-      params.append('pageSize', this.pageSize);
-      params.append('cpage', this.currentPage);
+      if (bpname == null) {
+        params.append('pageSize', this.pageSize);
+        params.append('cpage', this.currentPage);
 
-      this.$vuecombiListAxios('/business/clientlistvue.do', params).then(
-        function (response) {
-          console.log('clientSearch response' + JSON.stringify(response));
-          //paginate 설정
-          vm.totalCnt = response.data.countclientlist;
-          //거래처리스트 받기
-          vm.BPclientlist = response.data.clientlist;
-          //page를 전역변수 사용
-          vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
-          //vm.totalPage = vm.page();
+        this.$vuecombiListAxios('/business/clientlistvue.do', params).then(
+          function (response) {
+            console.log('clientSearch response' + JSON.stringify(response));
+            //paginate 설정
+            vm.totalCnt = response.data.countclientlist;
+            //거래처리스트 받기
+            vm.BPclientlist = response.data.clientlist;
+            //page를 전역변수 사용
+            vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
+            //vm.totalPage = vm.page();
 
-          vm.currentPage == 1
-            ? (vm.grdNo = 1)
-            : (vm.grdNo = 5 * (vm.currentPage - 1) + 1);
+            vm.currentPage == 1
+              ? (vm.grdNo = 1)
+              : (vm.grdNo = 5 * (vm.currentPage - 1) + 1);
 
-          for (let value of vm.BPclientlist) {
-            value.indexNew = vm.grdNo++;
+            for (let value of vm.BPclientlist) {
+              value.indexNew = vm.grdNo++;
+            }
           }
-        }
-      );
-      //}
+        );
+      } else {
+        params.append('bpname', bpname);
+        params.append('pageSize', this.pageSize);
+        params.append('cpage', this.currentPage);
+
+        this.$vuecombiListAxios('/business/clientlistvue.do', params).then(
+          function (response) {
+            console.log('clientSearch response' + JSON.stringify(response));
+            //paginate 설정
+            vm.totalCnt = response.data.countclientlist;
+            //거래처리스트 받기
+            vm.BPclientlist = response.data.clientlist;
+            //page를 전역변수 사용
+            vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
+            //vm.totalPage = vm.page();
+
+            vm.currentPage == 1
+              ? (vm.grdNo = 1)
+              : (vm.grdNo = 5 * (vm.currentPage - 1) + 1);
+
+            for (let value of vm.BPclientlist) {
+              value.indexNew = vm.grdNo++;
+            }
+          }
+        );
+      }
     },
     //전역변수로 page 설정. 데이터를 page로 나눠주는 역할. 이미 설정
     //paginate callback
