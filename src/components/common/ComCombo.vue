@@ -70,7 +70,7 @@ export default {
     this.emitter.on(this.eventid, (params) => {
       //alert('event : ' + this.eventid + ' : ' + params);
       this.defaultvalue = params;
-      alert('this.defaultvalue: ' + this.defaultvalue + 'params: ' + params);
+      //alert('this.defaultvalue: ' + this.defaultvalue + 'params: ' + params);
     });
   },
   methods: {},
