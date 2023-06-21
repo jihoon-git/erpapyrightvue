@@ -25,6 +25,7 @@
       type="all"
       selvalue=""
       eventid="ComboEvent"
+      resetid="ResetEvent"
       v-model="laccount_cd"
       @change="bclick"
       ref="Com_combo"
@@ -68,6 +69,9 @@
       ><span>저장</span></a
     >
   </div> -->
+  <a class="btnType blue" id="btnSaveDtlCod" name="btn" @click="searchBtn"
+    ><span>검색</span></a
+  >
 </template>
 <script>
 //import clientSelectBox from '@/components/common/clientSelectBox.vue';
@@ -95,11 +99,17 @@ export default {
   unmounted() {
     this.emitter.off('ComboEvent');
     this.emitter.off('detailCombo');
+    this.emitter.off('ResetEvent');
   },
   mounted() {
     this.testlist();
   },
   methods: {
+    searchBtn: function () {
+      //검색버튼 눌렀을 때 리셋해주세요
+      this.testlist();
+      this.emitter.emit('ResetEvent', '');
+    },
     testlist: function () {
       // 본인 메소드 쓰시면 됩니다
     },

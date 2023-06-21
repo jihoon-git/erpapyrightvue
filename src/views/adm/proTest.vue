@@ -7,6 +7,7 @@
       type="all"
       selvalue=""
       eventid="ProLCombo"
+      resetid="ResetEvent"
       v-model="lcategory_cd"
       @change="ProLclick"
       ref="Com_combo"
@@ -47,23 +48,26 @@
     <a class="btnType blue" id="btnSaveDtlCod" name="btn" @click="ProSclick"
       ><span>저장</span></a
     >
+    <a class="btnType blue" id="btnSaveDtlCod" name="btn" @click="searchBtn"
+      ><span>검색</span></a
+    >
   </div>
 </template>
 <script>
-import ProLComCombo from "@/components/common/ProLComCombo.vue";
-import ProMCombo from "@/components/common/ProMCombo.vue";
-import ProSCombo from "@/components/common/ProSCombo.vue";
+import ProLComCombo from '@/components/common/ProLComCombo.vue';
+import ProMCombo from '@/components/common/ProMCombo.vue';
+import ProSCombo from '@/components/common/ProSCombo.vue';
 export default {
   data: function () {
     return {
       group_code: 0,
       client_no: 0,
-      clientName: "",
-      laccount_cd: "",
-      account_name: "",
-      lcategory_cd: "",
-      mcategory_cd: "",
-      product_no: "",
+      clientName: '',
+      laccount_cd: '',
+      account_name: '',
+      lcategory_cd: '',
+      mcategory_cd: '',
+      product_no: '',
     };
   },
   components: {
@@ -72,26 +76,32 @@ export default {
     ProSCombo,
   },
   unmounted() {
-    this.emitter.off("ProLCombo");
-    this.emitter.off("ProMCombo");
-    this.emitter.off("ProSCombo");
+    this.emitter.off('ProLCombo');
+    this.emitter.off('ProMCombo');
+    this.emitter.off('ProSCombo');
+    this.emitter.off('ResetEvent');
   },
   mounted() {
     this.testlist();
   },
   methods: {
+    searchBtn: function () {
+      //검색버튼 눌렀을 때 리셋해주세요
+      this.testlist();
+      this.emitter.emit('ResetEvent', '');
+    },
     testlist: function () {
-      console.log("시작은 여기야 !!!!!");
+      console.log('시작은 여기야 !!!!!');
     },
     ProLclick: function () {
-      this.emitter.emit("ProLCombo", this.lcategory_cd);
+      this.emitter.emit('ProLCombo', this.lcategory_cd);
     },
     ProMclick: function () {
-      this.emitter.emit("ProMCombo", this.mcategory_cd);
+      this.emitter.emit('ProMCombo', this.mcategory_cd);
     },
 
     ProSclick: function () {
-      this.emitter.emit("ProSCombo", this.product_no);
+      this.emitter.emit('ProSCombo', this.product_no);
     },
   },
 };

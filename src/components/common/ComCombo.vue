@@ -31,6 +31,7 @@ export default {
     type: String,
     selvalue: String,
     eventid: String,
+    resetid: String,
   },
   data: function () {
     return {
@@ -70,6 +71,11 @@ export default {
     this.emitter.on(this.eventid, (params) => {
       //alert('event : ' + this.eventid + ' : ' + params);
       this.defaultvalue = params;
+      //alert('this.defaultvalue: ' + this.defaultvalue + 'params: ' + params);
+    });
+    this.emitter.on(this.resetid, () => {
+      //alert('event : ' + this.eventid + ' : ' + params);
+      this.defaultvalue = '';
       //alert('this.defaultvalue: ' + this.defaultvalue + 'params: ' + params);
     });
   },
