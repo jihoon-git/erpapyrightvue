@@ -12,7 +12,7 @@
       <option value="">선택</option>
     </template>
     <template v-for="itemone in items" :key="itemone.laccount_cd">
-      <option :value="itemone.laccount_cd">
+      <option :value="itemone.account_cd">
         {{ itemone.account_name }}
       </option>
     </template>
@@ -45,11 +45,13 @@ export default {
       this.detaillist(vm.countCd);
     },
   },
+  mounted() {
+    this.detaillist();
+  },
   methods: {
-    detaillist: function (val) {
+    detaillist: function () {
       let vm = this;
       this.sid = this.selectid;
-      alert(val);
       //  수정 시 (grp_cod 에 해당하는 상세코드 정보 가져오기)
       let params = new URLSearchParams();
       params.append('laccount_cd', this.laccount_cd);
