@@ -28,7 +28,6 @@
       v-model="laccount_cd"
       @change="bclick"
       ref="Com_combo"
-      @send-message="sendmessage"
       style="margin-right: 3px"
     ></ComCombo>
     <!-- <a class="btnType blue" id="btnSaveDtlCod" name="btn" @click="bclick"
@@ -40,14 +39,13 @@
     <h2>상세분류명</h2>
     <detileAccount
       :laccount_cd="laccount_cd"
-      selectid="laccount_cd"
+      selectid="account_cd"
       type="all"
       selvalue=""
       eventid="detailCombo"
-      v-model="laccount_cd"
+      v-model="account_cd"
       @change="ComboChange"
       ref="Com_combo"
-      @send-message="sendmessage"
       style="margin-right: 3px"
     ></detileAccount>
   </div>
@@ -86,40 +84,30 @@ export default {
       laccount_cd: '',
       laccountName: '',
       testVal: 0,
-      //lcategory_cd: 0,
-      //lcategoryName: '',
-      //mcategory_cd: 0,
-      //mcategoryName: '',
+      account_cd: '',
     };
   },
   components: {
-    //clientSelectBox,
     ComCombo,
     detileAccount,
-    //productList,
+    //clientSelectBox,
   },
   unmounted() {
     this.emitter.off('ComboEvent');
+    this.emitter.off('detailCombo');
   },
   mounted() {
     this.testlist();
   },
   methods: {
     testlist: function () {
-      console.log('첫 시작은 여기야 : ' + this.laccount_cd);
+      // 본인 메소드 쓰시면 됩니다
     },
     bclick: function () {
       this.emitter.emit('ComboEvent', this.laccount_cd);
-
-      alert('이벤트가 발생했다.(testVal 값) : ' + this.laccount_cd);
-    },
-    sendmessage: function () {
-      //alert('sendmessage');
     },
     ComboChange: function () {
-      alert('콤보가 바뀌었다. 아래의 이벤트.');
-
-      this.emitter.emit('detailCombo', this.laccount_cd);
+      this.emitter.emit('detailCombo', this.account_cd);
     },
   },
 };

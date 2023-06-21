@@ -35,21 +35,19 @@
           v-model="client_no"
           @change="bclick"
           ref="Com_combo"
-          @send-message="sendmessage"
           style="margin-right: 3px"
         ></clientSelectBox>
 
         계정과목
         <detileAccount
-          laccount_cd=""
-          selectid="laccount_cd"
+          :laccount_cd="laccount_cd"
+          selectid="account_name"
           type="all"
           selvalue=""
           eventid="ComboEvent"
           v-model="account_name"
           @change="bclick"
           ref="Com_combo"
-          @send-message="sendmessage"
           style="margin-right: 3px"
         ></detileAccount>
         <a
@@ -257,9 +255,6 @@ export default {
       this.emitter.emit('ComboEvent', this.account_name);
 
       //alert(this.client_no);
-    },
-    sendmessage: function () {
-      // alert('sendmessage');
     },
     searchClick: function () {
       this.searchKey = '';

@@ -11,9 +11,9 @@
     <template v-else>
       <option value="">선택</option>
     </template>
-    <template v-for="itemone in items" :key="itemone.laccount_cd">
-      <option :value="itemone.account_cd">
-        {{ itemone.account_name }}
+    <template v-for="itemone in items" :key="itemone.mcategory_cd">
+      <option :value="itemone.mcategory_cd">
+        {{ itemone.product_name }}
       </option>
     </template>
   </select>
@@ -24,7 +24,7 @@ export default {
   // vue에서는 받아온 변수를 methods에서 직접 핸들링이 불가능하기 때문에
   // 임시 변수를 만들어서 받아온 변수를 넣어 줘야 함
   props: {
-    laccount_cd: String,
+    lcategory_cd: String,
     selectid: String,
     type: String,
     selvalue: String,
@@ -33,55 +33,41 @@ export default {
   data: function () {
     return {
       items: [],
-      defaultvalue: '',
-      sid: '',
-      countCd: this.laccount_cd,
+      defaultvalue: "",
+      sid: "",
+      testCd: this.lcategory_cd,
+      test2Cd: this.mcategory_cd,
     };
   },
   watch: {
-    laccount_cd() {
+    lcategory_cd() {
       const vm = this;
-      vm.countCd = vm.laccount_cd;
-      this.detaillist(vm.countCd);
+      this.detaillist(vm.lcategory_cd);
     },
   },
   mounted() {
     this.detaillist();
   },
+  // html 로딩, 가상 dom 실행, 이 두 개 연결 시 작동
   methods: {
     detaillist: function () {
       let vm = this;
       this.sid = this.selectid;
+
       //  수정 시 (grp_cod 에 해당하는 상세코드 정보 가져오기)
       let params = new URLSearchParams();
-      params.append('laccount_cd', this.laccount_cd);
-      console.log('detileAccount params 확인 ' + params);
-      console.log('detileAccount laccount_cd 확인 ' + this.laccount_cd);
+      params.append("lcategory_cd", vm.lcategory_cd);
       this.axios
-        .post('/accounting/detileAccountList.do', params)
+        .post("/accounting/midProductList.do", params)
         .then(function (response) {
-          console.log('detileAccount Json 값 : ' + JSON.stringify(response));
-          console.log(
-            'detileAccount List 값 : ' +
-              JSON.stringify(response.data.detileAccountList)
-          );
-
-          vm.items = response.data.detileAccountList;
+          vm.items = response.data.midProductList;
           vm.defaultvalue = vm.selvalue;
-
-          console.log(
-            'vm.defaultvalue : ' +
-              vm.defaultvalue +
-              ' vm.selvalue : ' +
-              vm.selvalue
-          );
         })
         .catch(function (error) {
-          alert('에러! API 요청에 오류가 있습니다. ' + error);
+          alert("에러! API 요청에 오류가 있습니다. " + error);
         });
 
       this.emitter.on(this.eventid, (params) => {
-        //alert('event : ' + this.eventid + ' : ' + params);
         this.defaultvalue = params;
       });
     },
