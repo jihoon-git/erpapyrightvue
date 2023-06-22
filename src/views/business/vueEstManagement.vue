@@ -120,6 +120,8 @@
 <script>
 import paginate from 'vuejs-paginate-next';
 import vueEstManagementDet from './vueEstManagementDet.vue';
+import vueEstManagementModal from './vueEstManagementModal.vue';
+import { openModal } from 'jenesius-vue-modal';
 export default {
   data() {
     return {
@@ -201,9 +203,13 @@ export default {
       //   console.log(this.estDetData);
       //   console.log('======================부모창');
     },
-    fn_openpopup: function () {
-      alert('오픈팝업');
-      // 신규작성 팝업에 콤보박스뿐이라 우선 제외하고 컨버징
+    fn_openpopup: async function () {
+      const modal = await openModal(vueEstManagementModal);
+
+      modal.onclose = () => {
+        this.searchest();
+        this.estDetChk = false;
+      };
     },
   },
 };
