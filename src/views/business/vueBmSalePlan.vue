@@ -27,37 +27,42 @@
         v-model="scsearchdate"
       />
       제품 대분류 품목별
-      <select
-        name="lcategory"
-        id="lcategory"
-        v-model="lcategory"
-        v-show="lcategoryflag"
+      <ProLComCombo
+        group_code="lcategory_cd"
+        selectid="lcategory_cd"
+        type="all"
+        selvalue=""
+        eventid="ProLCombo"
+        v-model="lcategory_cd"
+        @change="ProLclick"
+        ref="Com_combo"
         style="width: 70px"
-        @change="lcategorychange()"
-      ></select>
+      ></ProLComCombo>
       제품 중분류 품목별
-      <select id="midchoice" style="width: 70px" v-show="midchoiceflag">
-        <option>선택</option>
-      </select>
-      <select
-        name="mcategory"
-        id="mcategory"
-        v-model="mcategory"
-        v-show="mcategoryflag"
+      <ProMCombo
+        :lcategory_cd="lcategory_cd"
+        selectid="mcategory_cd"
+        type="all"
+        selvalue=""
+        eventid="ProMCombo"
+        v-model="mcategory_cd"
+        @change="ProMclick"
+        ref="Com_combo"
         style="width: 70px"
-        @change="mcategorychange()"
-      ></select>
+      ></ProMCombo>
       제품이름
-      <select id="prodchoice" style="width: 70px" v-show="prodchoiceflag">
-        <option>선택</option>
-      </select>
-      <select
-        name="productname"
-        id="productname"
-        v-model="productname"
-        v-show="productnameflag"
+      <ProSCombo
+        :lcategory_cd="lcategory_cd"
+        :mcategory_cd="mcategory_cd"
+        selectid="product_name"
+        type="all"
+        selvalue=""
+        eventid="ProSCombo"
+        v-model="product_no"
+        @change="ProSclick"
+        ref="Com_combo"
         style="width: 70px"
-      ></select>
+      ></ProSCombo>
       <a
         class="btnType blue"
         href=""
@@ -206,6 +211,9 @@
 </template>
 
 <script>
+import ProLComCombo from '@/components/common/ProLComCombo.vue';
+import ProMCombo from '@/components/common/ProMCombo.vue';
+import ProSCombo from '@/components/common/ProSCombo.vue';
 import Paginate from 'vuejs-paginate-next';
 
 export default {
@@ -218,15 +226,13 @@ export default {
       lcategory: '',
       mcategory: '',
       productname: '',
+      lcategory_cd: '',
+      mcategory_cd: '',
+      product_no: '',
       grouplist: [],
       countbmsaleplan: 0,
       bmSalePlanPagination: '',
       userType: '',
-      lcategoryflag: true,
-      midchoiceflag: true,
-      mcategoryflag: false,
-      prodchoiceflag: true,
-      productnameflag: false,
       scempname: '',
       scsearchdate: '',
       sclcategory: '',
@@ -239,7 +245,15 @@ export default {
     };
   },
   components: {
+    ProLComCombo,
+    ProMCombo,
+    ProSCombo,
     Paginate: Paginate,
+  },
+  unmounted() {
+    this.emitter.off('ProLCombo');
+    this.emitter.off('ProMCombo');
+    this.emitter.off('ProSCombo');
   },
   mounted() {
     let vm = this;
@@ -267,9 +281,9 @@ export default {
       let vm = this;
       param.append('empname', this.empname);
       param.append('searchdate', this.scsearchdate); // (db에 저장된 이름, )
-      param.append('lcategory', '');
-      param.append('mcategory', '');
-      param.append('productname', '');
+      param.append('lcategory', this.lcategory_cd);
+      param.append('mcategory', this.mcategory_cd);
+      param.append('productname', this.product_no);
       param.append('pageSize', this.pageSize);
       param.append('cpage', this.cpage);
       this.$vuecombiListAxios('/business/vueBmsaleplanlist.do', param).then(
@@ -281,6 +295,16 @@ export default {
           vm.totalPage = vm.$page(vm.countbmsaleplan, vm.pageSize);
         }
       );
+    },
+    ProLclick: function () {
+      this.emitter.emit('ProLCombo', this.lcategory_cd);
+    },
+    ProMclick: function () {
+      this.emitter.emit('ProMCombo', this.mcategory_cd);
+    },
+
+    ProSclick: function () {
+      this.emitter.emit('ProSCombo', this.product_no);
     },
   },
 };
