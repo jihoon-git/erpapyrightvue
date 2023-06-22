@@ -7,7 +7,6 @@
       type="all"
       selvalue=""
       eventid="ProLCombo"
-      resetid="ResetEvent"
       v-model="lcategory_cd"
       @change="ProLclick"
       ref="Com_combo"
@@ -26,6 +25,7 @@
       @change="ProMclick"
       ref="Com_combo"
       style="margin-right: 3px"
+      :key="keys"
     ></ProMCombo>
     <a class="btnType blue" id="btnSaveDtlCod" name="btn" @click="ProMclick"
       ><span>저장</span></a
@@ -44,12 +44,10 @@
       @change="ProSclick"
       ref="Com_combo"
       style="margin-right: 3px"
+      :key="keys"
     ></ProSCombo>
     <a class="btnType blue" id="btnSaveDtlCod" name="btn" @click="ProSclick"
       ><span>저장</span></a
-    >
-    <a class="btnType blue" id="btnSaveDtlCod" name="btn" @click="searchBtn"
-      ><span>검색</span></a
     >
   </div>
 </template>
@@ -68,6 +66,7 @@ export default {
       lcategory_cd: '',
       mcategory_cd: '',
       product_no: '',
+      keys: 0,
     };
   },
   components: {
@@ -79,22 +78,19 @@ export default {
     this.emitter.off('ProLCombo');
     this.emitter.off('ProMCombo');
     this.emitter.off('ProSCombo');
-    this.emitter.off('ResetEvent');
   },
   mounted() {
     this.testlist();
   },
   methods: {
-    searchBtn: function () {
-      //검색버튼 눌렀을 때 리셋해주세요
-      this.testlist();
-      this.emitter.emit('ResetEvent', '');
-    },
     testlist: function () {
       console.log('시작은 여기야 !!!!!');
     },
     ProLclick: function () {
       this.emitter.emit('ProLCombo', this.lcategory_cd);
+      this.mcategory_cd = '';
+      this.product_no = '';
+      this.keys += 1;
     },
     ProMclick: function () {
       this.emitter.emit('ProMCombo', this.mcategory_cd);
