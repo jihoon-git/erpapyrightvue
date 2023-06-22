@@ -1,182 +1,181 @@
 <template>
-  <div id="wrap_area">
-    <p class="Location">
-      <a href="../dashboard/dashboard.do" class="btn_set home">메인으로</a>
-      <span class="btn_nav bold">인사 급여</span>
-      <span class="btn_nav bold">급여관리</span>
-      <a href="..//system/comnCodMgr" class="btn_set refresh">새로고침</a>
-    </p>
+  <p class="Location">
+    <a href="../dashboard/dashboard.do" class="btn_set home">메인으로</a>
+    <span class="btn_nav bold">인사 급여</span>
+    <span class="btn_nav bold">급여관리</span>
+    <a href="..//system/comnCodMgr" class="btn_set refresh">새로고침</a>
+  </p>
 
-    <p class="conTitle">
-      <span>급여 내역 조회</span>
-    </p>
-    <span class="fr" style="float: left; margin-bottom: 5px">
-      부서
-      <ComCombo
-        group_code="dept_cd"
-        selectid="deptname"
-        type="all"
-        selvalue=""
-        eventid="selectDept"
-        v-model="deptname"
-        style="width: 100px; height: 20px"
-        ref="Com_combo"
-      ></ComCombo>
-      &nbsp;직급
-      <ComCombo
-        group_code="rank_cd"
-        selectid="srcrank"
-        type="all"
-        selvalue=""
-        eventid="selectRank"
-        v-model="srcrank"
-        style="width: 100px; height: 20px"
-        ref="Com_combo"
-      ></ComCombo>
-      &nbsp;사원명
-      <input
-        type="text"
-        width="100px;"
-        id="srcName"
-        name="srcName"
-        v-model="srcName"
-      />
-      &nbsp;지급상태
-      <select name="srcyn" id="srcyn" style="width: 50px" v-model="srcyn">
-        <option value>전체</option>
-        <option value="y">완료</option>
-        <option value="w">대기</option>
-      </select>
-      &nbsp;급여년월
-      <input
-        type="date"
-        id="srcdate"
-        name="srcdate"
-        style="margin-right: 90px"
-        v-model="srcdate"
-      />
-      <a class="btnType blue" href="" @click.prevent="btnEmpClick()"
-        ><span>검색</span></a
-      >
-      <a
-        class="btnType blue"
-        href=""
-        id="btnAllSave"
-        name="btn"
-        v-show="btnAllSave_show"
-        @click.prevent="allSaveBtn()"
-        ><span>일괄지급</span></a
-      >
-    </span>
+  <p class="conTitle">
+    <span>급여 내역 조회</span>
+  </p>
+  <span class="fr" style="float: left; margin-bottom: 5px">
+    부서
+    <ComCombo
+      group_code="dept_cd"
+      selectid="deptname"
+      type="all"
+      selvalue=""
+      eventid="selectDept"
+      v-model="deptname"
+      style="width: 100px; height: 20px"
+      ref="Com_combo"
+    ></ComCombo>
+    &nbsp;직급
+    <ComCombo
+      group_code="rank_cd"
+      selectid="srcrank"
+      type="all"
+      selvalue=""
+      eventid="selectRank"
+      v-model="srcrank"
+      style="width: 100px; height: 20px"
+      ref="Com_combo"
+    ></ComCombo>
+    &nbsp;사원명
+    <input
+      type="text"
+      width="100px;"
+      id="srcName"
+      name="srcName"
+      v-model="srcName"
+    />
+    &nbsp;지급상태
+    <select name="srcyn" id="srcyn" style="width: 50px" v-model="srcyn">
+      <option value>전체</option>
+      <option value="y">완료</option>
+      <option value="w">대기</option>
+    </select>
+    &nbsp;급여년월
+    <input
+      type="date"
+      id="srcdate"
+      name="srcdate"
+      style="margin-right: 30px"
+      v-model="srcdate"
+    />
+    <a class="btnType blue" href="" @click.prevent="btnEmpClick()"
+      ><span>검색</span></a
+    >
+    <a
+      class="btnType blue"
+      href=""
+      id="btnAllSave"
+      name="btn"
+      v-show="btnAllSave_show"
+      @click.prevent="allSaveBtn()"
+      ><span>일괄지급</span></a
+    >
+  </span>
 
-    <div class="empSearchList">
-      <table class="col">
-        <caption>
-          caption
-        </caption>
-        <colgroup>
-          <col width="7%" />
-          <col width="6%" />
-          <col width="6%" />
-          <col width="6%" />
-          <col width="6%" />
+  <div class="empSearchList">
+    <table class="col">
+      <caption>
+        caption
+      </caption>
+      <colgroup>
+        <col width="7%" />
+        <col width="6%" />
+        <col width="6%" />
+        <col width="6%" />
+        <col width="6%" />
 
-          <col width="8%" />
-          <col width="8%" />
-          <col width="7%" />
-          <col width="7%" />
-          <col width="7%" />
+        <col width="8%" />
+        <col width="8%" />
+        <col width="7%" />
+        <col width="7%" />
+        <col width="7%" />
 
-          <col width="7%" />
-          <col width="6%" />
-          <col width="7%" />
-          <col width="6%" />
-          <col width="6%" />
-        </colgroup>
-        <thead>
+        <col width="7%" />
+        <col width="6%" />
+        <col width="7%" />
+        <col width="6%" />
+        <col width="6%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">지급년월</th>
+          <th scope="col">부서</th>
+          <th scope="col">직급</th>
+          <th scope="col">사번</th>
+          <th scope="col">사원명</th>
+
+          <th scope="col">연봉</th>
+          <th scope="col">기본급</th>
+          <th scope="col">국민연금</th>
+          <th scope="col">건강보험</th>
+          <th scope="col">산재보험</th>
+
+          <th scope="col">고용보험</th>
+          <th scope="col">소득세</th>
+          <th scope="col">비고금액</th>
+          <th scope="col">실급여</th>
+          <th scope="col">지급</th>
+        </tr>
+      </thead>
+      <template v-if="totalCnt == 0">
+        <tbody>
           <tr>
-            <th scope="col">지급년월</th>
-            <th scope="col">부서</th>
-            <th scope="col">직급</th>
-            <th scope="col">사번</th>
-            <th scope="col">사원명</th>
-
-            <th scope="col">연봉</th>
-            <th scope="col">기본급</th>
-            <th scope="col">국민연금</th>
-            <th scope="col">건강보험</th>
-            <th scope="col">산재보험</th>
-
-            <th scope="col">고용보험</th>
-            <th scope="col">소득세</th>
-            <th scope="col">비고금액</th>
-            <th scope="col">실급여</th>
-            <th scope="col">지급</th>
+            <td colspan="15">데이터가 존재하지 않습니다.</td>
           </tr>
-        </thead>
-        <template v-if="totalCnt == 0">
-          <tbody>
-            <tr>
-              <td colspan="15">데이터가 존재하지 않습니다.</td>
-            </tr>
-          </tbody>
-        </template>
-        <template v-else>
-          <tbody v-for="(list, index) in empPaylist" :key="index">
-            <tr @click="fn_oneemp(list.sloginID)">
-              <td>{{ list.pay_date }}</td>
-              <td>{{ list.dept }}</td>
-              <td>{{ list.rank }}</td>
-              <td>{{ list.emp_no }}</td>
-              <td>{{ list.name }}</td>
-              <td>{{ $comma(list.year_pay) }}</td>
-              <td>{{ $comma(list.month_pay) }}</td>
-              <td>{{ $comma(list.ins_n) }}</td>
-              <td>{{ $comma(list.ins_h) }}</td>
-              <td>{{ $comma(list.ins_i) }}</td>
-              <td>{{ $comma(list.ins_e) }}</td>
-              <td>{{ $comma(list.tax) }}</td>
-              <td>{{ $comma(list.extra) }}</td>
-              <td>{{ $comma(list.total) }} 원</td>
-              <template v-if="list.pay_yn == 'y'">
-                <td>지급완료</td>
-              </template>
-              <template v-else>
-                <td>
-                  <a
-                    style="color: red; font-weight: bold"
-                    href=""
-                    @click.prevent="
-                      fn_loginsave(list.sloginID, list.salary_no, list.exp_no)
-                    "
-                    ><span>지급대기</span></a
-                  >
-                </td>
-              </template>
-            </tr>
-          </tbody>
-        </template>
-      </table>
-    </div>
-    <div>
-      <paginate
-        class="justify-content-center"
-        v-model="currentPage"
-        :page-count="totalPage"
-        :page-range="5"
-        :margin-pages="0"
-        :click-handler="clickCallback"
-        :prev-text="'Prev'"
-        :next-text="'Next'"
-        :container-class="'pagination'"
-        :page-class="'page-item'"
-      >
-      </paginate>
-    </div>
-
-    <br />
-    <br />
+        </tbody>
+      </template>
+      <template v-else>
+        <tbody v-for="(list, index) in empPaylist" :key="index">
+          <tr @click="fn_oneemp(list.sloginID)">
+            <td>{{ list.pay_date }}</td>
+            <td>{{ list.dept }}</td>
+            <td>{{ list.rank }}</td>
+            <td>{{ list.emp_no }}</td>
+            <td>{{ list.name }}</td>
+            <td>{{ $comma(list.year_pay) }}</td>
+            <td>{{ $comma(list.month_pay) }}</td>
+            <td>{{ $comma(list.ins_n) }}</td>
+            <td>{{ $comma(list.ins_h) }}</td>
+            <td>{{ $comma(list.ins_i) }}</td>
+            <td>{{ $comma(list.ins_e) }}</td>
+            <td>{{ $comma(list.tax) }}</td>
+            <td>{{ $comma(list.extra) }}</td>
+            <td>{{ $comma(list.total) }} 원</td>
+            <template v-if="list.pay_yn == 'y'">
+              <td>지급완료</td>
+            </template>
+            <template v-else>
+              <td>
+                <a
+                  style="color: red; font-weight: bold"
+                  href=""
+                  @click.prevent="
+                    fn_loginsave(list.sloginID, list.salary_no, list.exp_no)
+                  "
+                  ><span>지급대기</span></a
+                >
+              </td>
+            </template>
+          </tr>
+        </tbody>
+      </template>
+    </table>
   </div>
+  <div>
+    <paginate
+      class="justify-content-center"
+      v-model="currentPage"
+      :page-count="totalPage"
+      :page-range="5"
+      :margin-pages="0"
+      :click-handler="clickCallback"
+      :prev-text="'Prev'"
+      :next-text="'Next'"
+      :container-class="'pagination'"
+      :page-class="'page-item'"
+    >
+    </paginate>
+  </div>
+
+  <br />
+  <br />
+
   <vueEmpPaymentDet
     v-if="btnSearch == 's'"
     :sloginID="sloginID"
