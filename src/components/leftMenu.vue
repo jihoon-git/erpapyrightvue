@@ -63,17 +63,17 @@
 </template>
 
 <script>
-import SlideUpDown from "vue3-slide-up-down";
+import SlideUpDown from 'vue3-slide-up-down';
 // import Dashboard from "@/views/Dashboard.vue";
 
 export default {
-  name: "leftMenu",
+  name: 'leftMenu',
   components: { slide: SlideUpDown },
   data: function () {
     return {
       loginInfo: {
         menulist: [],
-        loginId: "",
+        loginId: '',
       },
     };
   },
@@ -87,19 +87,19 @@ export default {
   },
   methods: {
     logoutproc: function () {
-      this.$store.commit("logout");
+      this.$store.commit('logout');
 
       this.axios
-        .post("/loginOut.do")
+        .post('/loginOut.do')
         .then((resp) => {
           let data = resp.data;
           console.log(data.msg);
-          alert("LogOut 되어ㅆ습니다.");
-          this.$router.push("/");
+          alert('로그아웃 되었습니다.');
+          this.$router.push('/');
         })
         .catch((error) => {
           console.log(error);
-          alert("API 요청에 오류가 있습니다");
+          alert('API 요청에 오류가 있습니다');
         });
     },
     /* menulink:function(path){

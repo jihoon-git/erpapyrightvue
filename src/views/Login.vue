@@ -58,7 +58,11 @@
               <span class="id_save">ID저장</span>
             </p>
             <div>
-              <a href="" id="RegisterBtn" name="modal"
+              <a
+                href=""
+                @click.prevent="fn_openpopup()"
+                id="RegisterBtn"
+                name="modal"
                 ><strong>[회원가입]</strong></a
               >
               <a href=""><strong>[아이디/비밀번호 찾기]</strong></a>
@@ -77,6 +81,8 @@
 <script>
 //import Dashboard from "@/views/Dashboard.vue";
 import '../assets/css/admin/login.css';
+import { openModal } from 'jenesius-vue-modal';
+import JoinUser from './JoinUser.vue';
 // import "../assets/js/common.js";
 export default {
   data: function () {
@@ -199,6 +205,13 @@ export default {
         val = unescape(cook.substring(begin, end));
       }
       return val;
+    },
+    fn_openpopup: async function () {
+      // const modal = await openModal(JoinUser);
+      await openModal(JoinUser);
+
+      // modal.onclose = () => {
+      // };
     },
   },
 };
