@@ -1,6 +1,24 @@
 <template>
   <canvas id="vueDdRevenueProduct" height="200"></canvas>
 </template>
+<!-- <template>
+  <template v-if="this.productArr == ''">
+    <div style="text-align: center">데이터가 존재하지 않습니다.</div>
+  </template>
+  <template v-else
+    ><canvas id="vueDdRevenueProduct" height="200"></canvas
+  ></template>
+  <canvas id="vueDdRevenueProduct" height="200"></canvas>
+</template>
+<template>
+  <template v-if="this.productArr == ''">
+    <div style="text-align: center">데이터가 존재하지 않습니다.</div>
+  </template>
+  <template v-else
+    ><canvas id="vueDdRevenueProduct" height="200"></canvas
+  ></template>
+  <canvas id="vueDdRevenueProduct" height="200"></canvas>
+</template> -->
 
 <script>
 import Chart from 'chart.js/auto';
@@ -14,6 +32,7 @@ export default {
   //       this.fnDdRevChart();
   //     },
   //   },
+  created() {},
   mounted() {
     this.productChart();
   },
@@ -28,6 +47,7 @@ export default {
 
       productArr: '',
       pSalesArr: 0,
+      cnt: '',
     };
   },
   computed: {},
@@ -40,7 +60,7 @@ export default {
 
       this.cSearchDate = this.date;
       this.cClientno = this.clientno;
-      console.log('====================차트');
+      console.log('====================제품차트');
 
       params.append('searchDate', this.cSearchDate);
       params.append('searchClientNo', this.cClientno);
@@ -51,11 +71,11 @@ export default {
 
           vm.chartDiv = response.data.ddRevProductChartModel;
 
-          console.log('vm.chartDiv ' + JSON.stringify(vm.chartDiv));
-          console.log(
-            'vresponse.data.ddRevChartModel ' +
-              JSON.stringify(response.data.ddRevProductChartModel)
-          );
+          // console.log('vm.chartDiv ' + JSON.stringify(vm.chartDiv));
+          // console.log(
+          //   'vresponse.data.ddRevChartModel ' +
+          //     JSON.stringify(response.data.ddRevProductChartModel)
+          // );
 
           const productArr = [];
           const pSalesArr = [];
@@ -65,6 +85,7 @@ export default {
             pSalesArr.push(vm.chartDiv[i].sum_p_sales);
           }
           vm.makeChart(productArr, pSalesArr);
+          console.log('pSalesArr ' + vm.pSalesArr);
         }
       );
     },

@@ -47,13 +47,6 @@
           <!-- 일별매출/한달간 누적매출 차트 영역 -->
           <td width="60%">
             <div>
-              <!-- <vueDdRevenueDet
-                v-if="btnSearch == 's'"
-                :date="searchDate"
-                :MonthAgo="oneMonthAgo"
-                :clientno="client_no"
-              ></vueDdRevenueDet>
-              <vueDdRevenueDet v-else></vueDdRevenueDet> -->
               <vueDdRevenueDet
                 :date="searchDate"
                 :MonthAgo="oneMonthAgo"
@@ -65,12 +58,19 @@
           <!-- 일자별 품목별 매출 파이 차트 영역 -->
           <td width="35%">
             <div>
-              <vueDdRevenueProduct
-                :date="searchDate"
-                :clientno="client_no"
-                :key="key"
-              >
-              </vueDdRevenueProduct>
+              <template v-if="totalCnt != 0">
+                <vueDdRevenueProduct
+                  :date="searchDate"
+                  :clientno="client_no"
+                  :key="key"
+                >
+                </vueDdRevenueProduct>
+              </template>
+              <template v-else>
+                <div style="position: relative; left: 90px">
+                  <span><strong> 데이터가 존재하지 않습니다. </strong> </span>
+                </div>
+              </template>
             </div>
           </td>
         </tr>
@@ -112,7 +112,9 @@
         <template v-if="totalCnt == 0">
           <tbody>
             <tr>
-              <td colspan="8">데이터가 존재하지 않습니다.</td>
+              <td colspan="8">
+                <strong> 데이터가 존재하지 않습니다. </strong>
+              </td>
             </tr>
           </tbody>
         </template>
