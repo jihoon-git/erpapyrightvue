@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     sendAPIdata: function (resp) {
-      this.emitter.emit("daumZipResult", resp);
+      this.emitter.emit('daumZipResult', resp);
     },
   },
 };
@@ -21,7 +21,7 @@ export default {
 
 <style>
 #d-api-zone {
-  position: fixed;
+  /* position: fixed; */
   left: 2px;
   top: 2px;
   border: 2px solid black;
