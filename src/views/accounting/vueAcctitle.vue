@@ -104,7 +104,7 @@
         :page-count="totalPage"
         :page-range="5"
         :margin-pages="0"
-        :click-handler="clickCallback"
+        :click-handler="searchAcctitle"
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pagination'"
@@ -132,7 +132,7 @@ export default {
       accTitlelist: [],
 
       //pageinate 설정
-      currentPage: 1,
+      currentPage: 0,
       pageSize: 5,
       totalPage: 1,
       totalCnt: 0,
@@ -175,10 +175,12 @@ export default {
       this.searchAcctitle();
     },
     //화면초기
-    searchAcctitle: function () {
+    searchAcctitle: function (currentPage) {
       let vm = this;
-
       let params = new URLSearchParams();
+
+      this.currentPage = currentPage || 1;
+
       if (this.src == 'S') {
         params.append('cpage', this.currentPage);
         params.append('pageSize', this.pageSize);
@@ -219,14 +221,14 @@ export default {
       //console.log('this.account_cd ' + this.account_cd);
     },
 
-    //paginate callback
-    clickCallback: function (pageNum) {
-      console.log(pageNum);
+    // //paginate callback
+    // clickCallback: function (pageNum) {
+    //   console.log(pageNum);
 
-      this.currentPage = pageNum;
-      //this.Paginate.pageNum = 10;
-      this.searchAcctitle();
-    },
+    //   this.currentPage = pageNum;
+    //   //this.Paginate.pageNum = 10;
+    //   this.searchAcctitle();
+    // },
 
     registerAccCodeBtn: async function () {
       const modal = await openModal(vueAcctitleModal, {
@@ -235,8 +237,8 @@ export default {
       }); //상세보기 클릭은 값을 넘겨야함.
 
       modal.onclose = () => {
-        console.log('Close : ');
-        this.searchAcctitle();
+        //console.log('Close : ');
+        this.searchAcctitle(this.currentPage);
       };
     },
     // 부서관리 초기화면에서 요소(부서명)를 클릭하면 상세조회
@@ -248,7 +250,7 @@ export default {
       }); //상세보기 클릭은 값을 넘겨야함.
 
       modal.onclose = () => {
-        console.log('Close : ');
+        //console.log('Close : ');
         this.searchAcctitle();
       };
     },
