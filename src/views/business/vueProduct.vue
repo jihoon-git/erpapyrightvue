@@ -254,7 +254,7 @@ export default {
       const modal = await openModal(vueProductModal, {});
 
       modal.onclose = () => {
-        this.productSearch();
+        this.productSearch(); // 닫기 버튼을 눌렀을 때, 자식창 -> 부모창 메서드를 호출하여 등록된 내용이 리스트에 업데이트 됨.
       };
     },
     ProLclick: function () {

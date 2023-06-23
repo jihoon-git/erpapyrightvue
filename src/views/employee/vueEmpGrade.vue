@@ -189,12 +189,6 @@ export default {
   },
 
   mounted() {
-    // let vm = this;
-    // let loginInfo = vm.$store.state.loginInfo;
-
-    // vm.loginID = loginInfo.loginId; //로그인 아이디
-    // vm.loginName = loginInfo.userNm; //로그인 이름
-    // vm.userType = loginInfo.userType; //유저타입
     this.searchempgrade();
   },
   methods: {
@@ -202,7 +196,6 @@ export default {
       this.emitter.emit('selectDept', this.selectDept);
       this.emitter.emit('selectRank', this.selectRank);
     },
-    sendmessage: function () {},
     schPromotion: function () {
       this.searchKey = '';
 
@@ -226,17 +219,18 @@ export default {
       this.cpage = cpage || 1;
       let vm = this;
       let param = new URLSearchParams();
-      param.append('pageSize', this.pageSize);
-      param.append('cpage', this.cpage);
 
       if (this.searchKey == 'Z') {
-        console.log('1234');
+        param.append('pageSize', this.pageSize);
+        param.append('cpage', this.cpage);
         param.append('srcdetp', this.deptname);
         param.append('srcrank', this.srcrank);
         param.append('srcempno', this.srcempno);
         param.append('srcsdate', this.srcsdate);
         param.append('srcedate', this.srcedate);
-        console.log('srcempno' + this.srcempno);
+      } else {
+        param.append('pageSize', this.pageSize);
+        param.append('cpage', this.cpage);
       }
 
       this.$vuecombiListAxios('/employee/vueEmpGradelist.do', param).then(
@@ -251,10 +245,6 @@ export default {
       this.btnSearch = 's';
       console.log('zzzzzzzzzzz : ' + this.btnSearch);
       this.empId = loginID;
-      // this.empName = emp_no;
-      // this.name = name;
-      // this.deptname = deptname;
-      // this.rankname = rankname;
       console.log('==================');
       console.log(loginID);
       console.log(this.empId);
