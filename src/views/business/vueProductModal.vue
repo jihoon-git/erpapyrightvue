@@ -222,6 +222,7 @@ export default {
       paraminsert.append('product_name', this.addProduct_cd); // 신규제품등록
       paraminsert.append('action', action);
       if (action == 'M') {
+        //첫번째 추가버튼을 눌렀을 때, 제품중분류, 신규중분류등록 중에 둘다 null이거나 제품대분류가 null이면 alert!!
         if (this.addMcategory_cd == '' && this.mcategory_cd == '') {
           alert('제품중분류를 선택해주세요');
         } else if (this.lcategory_cd == '') {
@@ -241,6 +242,7 @@ export default {
           });
         }
       } else if (action == 'S') {
+        //두번째 추가버튼을 눌렀을 때, 제품, 신규제품등록 중에 둘다 null이거나 제품대분류, 중분류 둘다 null이면 alert!!
         if (this.addMcategory_cd == '' && this.mcategory_cd == '') {
           alert('제품중분류를 선택해주세요');
         } else if (this.lcategory_cd == '') {
