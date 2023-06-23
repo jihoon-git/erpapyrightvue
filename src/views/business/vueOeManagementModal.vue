@@ -137,7 +137,6 @@ export default {
     };
   },
   mounted() {
-    this.receiveAction = this.saveModalAction;
     this.estimateDetaile2();
   },
   methods: {

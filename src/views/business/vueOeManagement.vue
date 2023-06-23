@@ -145,6 +145,7 @@ export default {
     return {
       oEManagementList: [],
       totalCnt: '',
+      searchKey: '',
 
       srcsdate: '',
       srcedate: '',
