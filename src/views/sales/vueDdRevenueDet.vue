@@ -28,6 +28,7 @@ export default {
       dateArr: '',
       salesArr: 0,
       cumsalesArr: 0,
+      keys: '',
     };
   },
   computed: {},
@@ -41,7 +42,8 @@ export default {
       this.cSearchDate = this.date;
       this.cMonthAgo = this.MonthAgo;
       this.cClientno = this.clientno;
-      console.log('====================차트');
+
+      console.log('====================매출차트');
 
       params.append('searchDate', this.cSearchDate);
       params.append('oneMonthAgo', this.cMonthAgo);
@@ -54,11 +56,11 @@ export default {
 
         vm.chartDiv = response.data.ddRevChartModel;
 
-        console.log('vm.chartDiv ' + JSON.stringify(vm.chartDiv));
-        console.log(
-          'vresponse.data.ddRevChartModel ' +
-            JSON.stringify(response.data.ddRevChartModel)
-        );
+        // console.log('vm.chartDiv ' + JSON.stringify(vm.chartDiv));
+        // console.log(
+        //   'vresponse.data.ddRevChartModel ' +
+        //     JSON.stringify(response.data.ddRevChartModel)
+        // );
 
         const dateArr = [];
         const salesArr = [];
