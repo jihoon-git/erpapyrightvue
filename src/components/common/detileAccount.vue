@@ -55,26 +55,26 @@ export default {
       //  수정 시 (grp_cod 에 해당하는 상세코드 정보 가져오기)
       let params = new URLSearchParams();
       params.append('laccount_cd', this.laccount_cd);
-      console.log('detileAccount params 확인 ' + params);
-      console.log('detileAccount laccount_cd 확인 ' + this.laccount_cd);
+      //console.log('detileAccount params 확인 ' + params);
+      //console.log('detileAccount laccount_cd 확인 ' + this.laccount_cd);
       this.axios
         .post('/accounting/detileAccountList.do', params)
         .then(function (response) {
-          console.log('detileAccount Json 값 : ' + JSON.stringify(response));
-          console.log(
-            'detileAccount List 값 : ' +
-              JSON.stringify(response.data.detileAccountList)
-          );
+          //console.log('detileAccount Json 값 : ' + JSON.stringify(response));
+          // console.log(
+          //   'detileAccount List 값 : ' +
+          //     JSON.stringify(response.data.detileAccountList)
+          // );
 
           vm.items = response.data.detileAccountList;
           vm.defaultvalue = vm.selvalue;
 
-          console.log(
-            'vm.defaultvalue : ' +
-              vm.defaultvalue +
-              ' vm.selvalue : ' +
-              vm.selvalue
-          );
+          // console.log(
+          //   'vm.defaultvalue : ' +
+          //     vm.defaultvalue +
+          //     ' vm.selvalue : ' +
+          //     vm.selvalue
+          // );
         })
         .catch(function (error) {
           alert('에러! API 요청에 오류가 있습니다. ' + error);

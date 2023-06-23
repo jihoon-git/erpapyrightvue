@@ -18,7 +18,9 @@
           class="LoginImg"
           alt="사진"
         />
-        <span class="LoginName">{{ loginInfo.loginId }}</span>
+        <span class="LoginName"
+          >{{ loginInfo.userNm }} ( {{ loginInfo.loginId }} )</span
+        >
         <div class="btn_loginArea">
           <a class="logout" @click="logoutproc()" name="modal"
             ><span>LOGOUT</span></a
@@ -74,6 +76,7 @@ export default {
       loginInfo: {
         menulist: [],
         loginId: '',
+        userNm: '',
       },
     };
   },
@@ -84,6 +87,7 @@ export default {
     });
     this.loginInfo.menulist = loginInfo.usrMnuAtrt;
     this.loginInfo.loginId = loginInfo.loginId;
+    this.loginInfo.userNm = loginInfo.userNm;
   },
   methods: {
     logoutproc: function () {
