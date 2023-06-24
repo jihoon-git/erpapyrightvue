@@ -143,7 +143,7 @@ export default {
   props: {
     dept_name: String,
     loginName: String,
-    emp_num: String,
+    emp_num: Number,
     hp: String,
   },
   data: function () {
@@ -164,17 +164,10 @@ export default {
     this.MloginName = this.loginName;
     this.Memp_num = this.emp_num;
     this.Mhp = this.hp;
-
-    console.log('Mdept_name : ' + this.Mdept_name);
-    console.log('MloginName : ' + this.MloginName);
-    console.log('this.Memp_num : ' + this.Memp_num);
   },
   methods: {
     saveBtnClick: function () {
       if (this.validationCheck()) {
-        // 입력 수정등을 위한 axios를 실행하는 함수(파라미터 값 등을 넘길 예정)
-        // 함수명이 검색용이긴 한데 무시하세요. 예시로 만든거라..
-        console.log('validationCheck 완료');
         this.dateValCheck();
       }
     },
@@ -192,7 +185,6 @@ export default {
     },
 
     dateValCheck: function () {
-      console.log('여기');
       const checkDate = this.$checkStartEndDate(this.st_date, this.ed_date);
       if (!checkDate) {
         // 검색 종료일 초기화
@@ -200,6 +192,24 @@ export default {
         return false;
       }
       //this.searchKey = 'Z';
+      //this.modalSave();
+      this.checkToday();
+    },
+
+    getToday: function () {
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = ('0' + (1 + date.getMonth())).slice(-2);
+      let day = ('0' + date.getDate()).slice(-2);
+
+      return year + '-' + month + '-' + day;
+    },
+
+    checkToday: function () {
+      if (this.st_date < this.getToday()) {
+        alert('신청 날짜가 오늘 이전이 될 수 없습니다.');
+        return false;
+      }
       this.modalSave();
     },
 
