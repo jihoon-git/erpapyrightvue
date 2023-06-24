@@ -144,7 +144,7 @@
         :page-count="totalPage"
         :page-range="5"
         :margin-pages="0"
-        :click-handler="clickCallback"
+        :click-handler="searchDdRev"
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pagination'"
@@ -188,7 +188,7 @@ export default {
       ddRevenueList: [],
 
       //pageinate 설정
-      currentPage: 1,
+      currentPage: 0,
       pageSize: 5,
       totalPage: 1,
       totalCnt: 0,
@@ -255,10 +255,12 @@ export default {
       this.searchDdRev();
     },
     //화면초기
-    searchDdRev: function () {
+    searchDdRev: function (currentPage) {
       let vm = this;
-
       let params = new URLSearchParams();
+
+      this.currentPage = currentPage || 1;
+
       if (this.src == 'S') {
         params.append('currentPage', this.currentPage);
         params.append('pageSize', this.pageSize);

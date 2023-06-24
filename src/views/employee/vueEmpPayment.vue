@@ -7,7 +7,7 @@
   </p>
 
   <p class="conTitle">
-    <span>급여 내역 조회</span>
+    <span>급여 관리</span>
   </p>
   <span class="fr" style="float: left; margin-bottom: 5px">
     부서
@@ -122,12 +122,18 @@
       </template>
       <template v-else>
         <tbody v-for="(list, index) in empPaylist" :key="index">
-          <tr @click="fn_oneemp(list.sloginID)">
+          <tr>
             <td>{{ list.pay_date }}</td>
             <td>{{ list.dept }}</td>
             <td>{{ list.rank }}</td>
-            <td>{{ list.emp_no }}</td>
-            <td>{{ list.name }}</td>
+            <td>
+              <a href="" @click.prevent="fn_oneemp(list.sloginID)">{{
+                list.emp_no
+              }}</a>
+            </td>
+            <td>
+              {{ list.name }}
+            </td>
             <td>{{ $comma(list.year_pay) }}</td>
             <td>{{ $comma(list.month_pay) }}</td>
             <td>{{ $comma(list.ins_n) }}</td>
@@ -164,7 +170,7 @@
       :page-count="totalPage"
       :page-range="5"
       :margin-pages="0"
-      :click-handler="clickCallback"
+      :click-handler="searchemp"
       :prev-text="'Prev'"
       :next-text="'Next'"
       :container-class="'pagination'"
@@ -198,7 +204,7 @@ export default {
       empPaylist: [],
 
       //pageinate 설정
-      currentPage: 1,
+      currentPage: 0,
       pageSize: 5,
       totalPage: 1,
       totalCnt: 0,
@@ -253,9 +259,11 @@ export default {
     },
 
     //화면초기
-    searchemp: function () {
+    searchemp: function (currentPage) {
       let vm = this;
       let params = new URLSearchParams();
+
+      this.currentPage = currentPage || 1;
 
       if (this.searchKey == 'Z') {
         params.append('cpage', this.currentPage);
@@ -273,7 +281,7 @@ export default {
 
       this.$vuecombiListAxios('/employee/vueEmpPaylist.do', params).then(
         function (response) {
-          console.log('searchemp response' + JSON.stringify(response));
+          // console.log('searchemp response' + JSON.stringify(response));
 
           //paginate 설정
           vm.totalCnt = response.data.cntempPaylist;
@@ -298,7 +306,7 @@ export default {
       console.log('sloginID ' + sloginID);
       console.log('salary_no ' + salary_no);
       console.log('exp_no ' + exp_no);
-      const saveOneQue = confirm('급여를 개별지급 하시겠습니까?');
+      const saveOneQue = confirm('급여를 지급 하시겠습니까?');
 
       if (saveOneQue) {
         this.sloginID = sloginID;
@@ -322,7 +330,7 @@ export default {
       this.$vuecombiListAxios('/employee/empsave.do', params).then(function (
         response
       ) {
-        console.log('empsave response' + JSON.stringify(response));
+        //console.log('empsave response' + JSON.stringify(response));
         if (response.data.result == 'SUCCESS') {
           alert('지급 되었습니다');
           vm.searchemp();
@@ -335,7 +343,7 @@ export default {
       let vm = this;
       let params = new URLSearchParams();
 
-      console.log('일괄지급 버튼 실행');
+      //console.log('일괄지급 버튼 실행');
       const saveAllQue = confirm('급여를 일괄지급 하시겠습니까?');
 
       if (saveAllQue) {
@@ -346,7 +354,7 @@ export default {
 
         this.$vuecombiListAxios('/employee/empsaveall.do', params).then(
           function (response) {
-            console.log('empsave response' + JSON.stringify(response));
+            //console.log('empsave response' + JSON.stringify(response));
             if (response.result == 'SUCCESS') {
               alert('지급 되었습니다.');
             }
@@ -357,21 +365,21 @@ export default {
       }
     },
 
-    //paginate callback
-    clickCallback: function (pageNum) {
-      console.log(pageNum);
+    // //paginate callback
+    // clickCallback: function (pageNum) {
+    //   console.log(pageNum);
 
-      this.currentPage = pageNum;
-      //this.Paginate.pageNum = 10;
-      this.searchemp();
-    },
+    //   this.currentPage = pageNum;
+    //   //this.Paginate.pageNum = 10;
+    //   this.searchemp();
+    // },
 
     fn_oneemp: function (sloginID) {
       this.btnSearch = 's';
       this.sloginID = sloginID;
 
-      console.log('this.btnSearch ' + this.btnSearch);
-      console.log('this.sloginID ' + this.sloginID);
+      //console.log('this.btnSearch ' + this.btnSearch);
+      //console.log('this.sloginID ' + this.sloginID);
     },
   },
 };

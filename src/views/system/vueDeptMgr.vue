@@ -64,7 +64,7 @@
         :page-count="totalPage"
         :page-range="5"
         :margin-pages="0"
-        :click-handler="clickCallback"
+        :click-handler="searchDept"
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pagination'"
@@ -91,7 +91,7 @@ export default {
       deptList: [],
 
       //pageinate 설정
-      currentPage: 1,
+      currentPage: 0,
       pageSize: 5,
       totalPage: 1,
       totalCnt: 0,
@@ -108,10 +108,12 @@ export default {
 
   methods: {
     //화면초기
-    searchDept: function (srcdept) {
+    searchDept: function (currentPage, srcdept) {
       let vm = this;
-
       let params = new URLSearchParams();
+
+      this.currentPage = currentPage || 1;
+
       if (srcdept == null) {
         params.append('cpage', this.currentPage);
         params.append('pageSize', this.pageSize);
@@ -124,7 +126,7 @@ export default {
       this.$vuecombiListAxios('/system/vueDeptlist.do', params).then(function (
         response
       ) {
-        console.log('searchDept response' + JSON.stringify(response));
+        //console.log('searchDept response' + JSON.stringify(response));
 
         //paginate 설정
         vm.totalCnt = response.data.countdeptlist;
@@ -144,13 +146,13 @@ export default {
     },
 
     //paginate callback
-    clickCallback: function (pageNum) {
-      console.log(pageNum);
+    // clickCallback: function (pageNum) {
+    //   //console.log(pageNum);
 
-      this.currentPage = pageNum;
-      //this.Paginate.pageNum = 10;
-      this.searchDept();
-    },
+    //   this.currentPage = pageNum;
+    //   //this.Paginate.pageNum = 10;
+    //   this.searchDept();
+    // },
     //전역변수로 이미 설정
     //page 설정. 데이터를 page로 나눠줌.
     // page: function () {
@@ -173,7 +175,7 @@ export default {
       }); //상세보기 클릭은 값을 넘겨야함.
 
       modal.onclose = () => {
-        console.log('Close : ');
+        //console.log('Close : ');
         this.searchDept();
       };
     },
@@ -186,7 +188,8 @@ export default {
       }); //상세보기 클릭은 값을 넘겨야함.
 
       modal.onclose = () => {
-        console.log('Close : ');
+        //console.log('Close : ');
+        //this.currentPage = 1;
         this.searchDept();
       };
     },

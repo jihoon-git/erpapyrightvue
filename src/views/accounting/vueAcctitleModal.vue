@@ -107,8 +107,19 @@
         <!-- e : 여기에 내용입력 -->
 
         <div class="btn_areaC mt30">
-          <a href="" class="btnType blue" @click.prevent="modalSave()"
+          <a
+            href=""
+            class="btnType blue"
+            v-if="receiveAction == 'I'"
+            @click.prevent="modalSave()"
             ><span>등록</span></a
+          >
+          <a
+            href=""
+            class="btnType blue"
+            v-if="receiveAction == 'U'"
+            @click.prevent="modalSave()"
+            ><span>수정</span></a
           >
           <!-- update 시에만 삭제버튼 -->
           <a
@@ -186,7 +197,7 @@ export default {
     //mounted가 아닌 beforemounted나 creacted에서 선언했어야 하는 값...?
     if (this.receiveAction == 'U') {
       this.modalDetail();
-      console.log('start');
+      //console.log('start');
     }
   },
   components: {
@@ -225,80 +236,140 @@ export default {
           vm.accnt_cd_test_show = false;
           vm.accnt_cd_test2_show = true;
 
-          console.log('modalDetail response ' + JSON.stringify(response));
-          console.log('modalDetail action ' + vm.receiveAction);
+          //console.log('modalDetail response ' + JSON.stringify(response));
+          //console.log('modalDetail action ' + vm.receiveAction);
         }
       );
     },
     //부서 관리 저장
     modalSave: function () {
+      let vm = this;
       let params = new URLSearchParams();
-      console.log('this.laccount_cd ' + this.laccount_cd);
-      console.log('this.account_cd ' + this.account_cd);
-      console.log('this.account_name ' + this.account_name);
-      console.log('this.account_type ' + this.account_type);
+      // console.log('this.laccount_cd ' + this.laccount_cd);
+      // console.log('this.account_cd ' + this.account_cd);
+      // console.log('this.account_name ' + this.account_name);
+      // console.log('this.account_type ' + this.account_type);
       //let vm = this;
       if (this.isValidated()) {
         //대분류 등록시에는 mounted
         //무조건 insert를 타야하는 구조임. 그이후에 update, delete 실행후 중복체크도 같이 됨.
-        console.log('receiveAction : ' + this.receiveAction);
+        //console.log('receiveAction : ' + this.receiveAction);
 
         if (this.receiveAction == 'I') {
-          params.append('action', 'I');
-          params.append('mlaccTitle', this.laccount_cd);
-          params.append('account_cd', this.account_cd);
-          params.append('account_name', this.account_name);
-          params.append('account_type', this.account_type);
+          const save = confirm('등록 하시겠습니까?');
+
+          if (save) {
+            params.append('action', 'I');
+            params.append('mlaccTitle', this.laccount_cd);
+            params.append('account_cd', this.account_cd);
+            params.append('account_name', this.account_name);
+            params.append('account_type', this.account_type);
+          } else {
+            this.modalClose();
+            return;
+          }
+
+          // params.append('action', 'I');
+          // params.append('mlaccTitle', this.laccount_cd);
+          // params.append('account_cd', this.account_cd);
+          // params.append('account_name', this.account_name);
+          // params.append('account_type', this.account_type);
 
           //params.append('detail_code', this.modalDetailCode);
-          console.log(
-            'modalSave receiveAction params' + JSON.stringify(params)
-          );
+          // console.log(
+          //   'modalSave receiveAction params' + JSON.stringify(params)
+          // );
 
           this.$vuecombiListAxios('/accounting/accTitlesave.do', params).then(
             (response) => {
+              if (response.data.result == 'FAILCD') {
+                alert(
+                  '계정과목코드가 중복 되었습니다. \n 확인 후 다시 입력해주세요. '
+                );
+                return;
+              } else if (response.data.result == 'FAILNM') {
+                alert(
+                  '계정과목코드명이 중복 되었습니다. \n 확인 후 다시 입력해주세요.'
+                );
+                return;
+              }
               alert('저장 되었습니다');
-              this.modalClose();
+              vm.modalClose();
 
-              console.log('결과');
-              console.log('modalSave response ' + JSON.stringify(response));
+              //console.log('결과 ' + JSON.stringify(response));
+              // console.log('modalSave response ' + JSON.stringify(response));
             }
           );
         } else if (this.receiveAction == 'U') {
-          //currentPage param?
-          params.append('action', 'U');
-          params.append('mlaccTitle', this.laccount_cd);
-          params.append('account_cd', this.account_cd2);
-          params.append('account_name', this.account_name);
-          params.append('account_type', this.account_type);
+          const update = confirm('수정 하시겠습니까?');
 
-          console.log('modalSave params' + JSON.stringify(params));
+          if (update) {
+            params.append('action', 'U');
+            params.append('mlaccTitle', this.laccount_cd);
+            params.append('account_cd', this.account_cd2);
+            params.append('account_name', this.account_name);
+            params.append('account_type', this.account_type);
+          } else {
+            vm.modalClose();
+            return;
+          }
+          // //currentPage param?
+          // params.append('action', 'U');
+          // params.append('mlaccTitle', this.laccount_cd);
+          // params.append('account_cd', this.account_cd2);
+          // params.append('account_name', this.account_name);
+          // params.append('account_type', this.account_type);
+
+          //console.log('modalSave params' + JSON.stringify(params));
 
           this.$vuecombiListAxios('/accounting/accTitlesave.do', params).then(
             function (response) {
-              console.log('modalSave response ' + JSON.stringify(response));
+              if (response.data.result == 'FAILCD') {
+                alert(
+                  '계정과목코드가 중복 되었습니다. \n 확인 후 다시 입력해주세요. '
+                );
+                return;
+              } else if (response.data.result == 'FAILNM') {
+                alert(
+                  '계정과목코드명이 중복 되었습니다. \n 확인 후 다시 입력해주세요.'
+                );
+                return;
+              }
+              //console.log('modalSave response ' + JSON.stringify(response));
+              alert('수정 되었습니다.');
+              vm.modalClose();
             }
           );
-          alert('수정 되었습니다.');
-          this.modalClose();
         }
       }
     },
     modalDelete: function () {
-      let vm = this;
       let params = new URLSearchParams();
-      params.append('action', 'D');
-      params.append('account_cd', this.account_cd);
+
+      const code_delete = confirm('삭제 하시겠습니까?');
+
+      if (code_delete) {
+        params.append('action', 'D');
+        params.append('account_cd', this.account_cd);
+        console.log('삭제' + this.account_cd);
+      } else {
+        this.modalClose();
+        return;
+      }
+      // params.append('action', 'D');
+      // params.append('account_cd', this.account_cd);
       this.$vuecombiListAxios('/accounting/accTitlesave.do', params).then(
-        function () {
-          alert('삭제되었습니다.');
+        function (response) {
+          if (response.data.result == 'SUCCESS') {
+            alert('삭제되었습니다.');
+          }
         }
       );
-      closeModal(vm);
+      this.modalClose();
     },
     /** 닫기 버튼  */
     modalClose: function () {
-      closeModal(this);
+      closeModal();
     },
     bclick: function () {
       this.emitter.emit('ComboEvent', this.laccount_cd);
