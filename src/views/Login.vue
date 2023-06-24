@@ -169,15 +169,15 @@ export default {
     checkNotEmpty: function (arr) {
       for (var i = 0, len = arr.length; i < len; i++) {
         var elem = document.getElementById(arr[i][0]);
-        console.log('elem is...');
-        console.log(elem);
+        //console.log('elem is...');
+        //console.log(elem);
         if (elem.length <= 0) {
           continue;
         }
         var elemValue = elem.value;
         var alertMsg = arr[i][1];
 
-        console.log(elemValue);
+        //console.log(elemValue);
         if (elemValue == '') {
           alert(alertMsg);
           elem.focus();
