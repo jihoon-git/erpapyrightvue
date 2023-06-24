@@ -68,14 +68,21 @@
             </tr>
             <tr>
               <th scope="row">우편번호<span class="font_red">*</span></th>
-              <td colspan="3">
+              <td colspan="2">
                 <input
                   type="text"
                   class="inputTxt p100"
-                  placeholder="숫자 5자 입니다."
                   id="det_zip_code"
                   v-model="det_zip_code"
                   ref="det_zip_code"
+                />
+              </td>
+              <td>
+                <input
+                  type="button"
+                  value="우편번호 찾기"
+                  @click="DaumPostcode()"
+                  style="width: 130px; height: 20px"
                 />
               </td>
             </tr>
@@ -180,7 +187,8 @@
   </div>
 </template>
 <script>
-import { closeModal } from 'jenesius-vue-modal';
+import DaumZipCode from '@/components/common/DaumZipCode.vue';
+import { closeModal, pushModal, popModal } from 'jenesius-vue-modal';
 
 export default {
   props: { saveModalAction: String, sendClientNo: Number },
@@ -292,7 +300,7 @@ export default {
       //유효성 검사
       let emailRules =
         /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-      let addrRules = /[0-9]{5}/;
+      //let addrRules = /[0-9]{5}/;
       let telRules = /^\d{2,3}-\d{3,4}-\d{4}$/;
       let hpRules = /^\d{3}-\d{3,4}-\d{4}$/;
       let perRules = /^\d{3}-\d{2}-\d{5}$/;
@@ -318,7 +326,8 @@ export default {
           //$('#det_manager_name').focus();
         });
         return false;
-      } else if (!addrRules.test(this.det_zip_code)) {
+      } else if (!hpRules.test(this.det_manager_hp)) {
+      /*       else if (!addrRules.test(this.det_zip_code)) {
         alert('우편번호를 확인해주세요.(숫자 5글자 입니다.)').then(function () {
           this.$refs.det_zip_code.focus();
           //$('#det_zip_code').focus();
@@ -336,7 +345,7 @@ export default {
           //$('#det_det_addr').focus();
         });
         return false;
-      } else if (!hpRules.test(this.det_manager_hp)) {
+      }  */
         alert('휴대폰번호를 확인해주세요. (-) 포함입니다.').then(function () {
           this.$refs.det_manager_hp.focus();
           //$('#det_manager_hp').focus();
@@ -432,6 +441,28 @@ export default {
     },
     modalClose: function () {
       closeModal();
+    },
+
+    /** 전역컴포넌트 다음 api 함수 */
+    DaumPostcode: async function () {
+      //다음 전역 컴포넌트 열기
+      await pushModal(DaumZipCode);
+
+      //컴포넌트 반환값 가져오기
+      this.emitter.on('daumZipResult', (res) => {
+        if (res) {
+          console.log(res);
+          this.det_zip_code = res.zonecode;
+
+          // addressType이 R이면 도로명주소, 아니면 지번주소로 입력
+          if (res.addressType == 'R') {
+            this.det_addr = res.roadAddress;
+          } else {
+            this.det_addr = res.jibunAddress;
+          }
+          popModal();
+        }
+      });
     },
   },
 };
