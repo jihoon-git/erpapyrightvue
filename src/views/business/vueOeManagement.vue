@@ -224,8 +224,6 @@ export default {
     },
     insertModal: async function () {
       //신규등록 모달창을 띄움
-      console.log('insertModal 안!!!');
-      console.log('여기확인: ' + this.estimate_cd);
       const modal = await openModal(vueOeManagementModal, {
         estimate_cd: this.estimate_cd,
         client_name: this.client_name,
@@ -251,7 +249,7 @@ export default {
       console.log('product_no:' + product_no);
 
       modal.onclose = () => {
-        this.oEManagemenSearch();
+        this.oEManagemenSearch(this.cpage);
       };
     },
   },

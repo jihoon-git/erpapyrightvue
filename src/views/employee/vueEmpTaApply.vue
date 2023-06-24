@@ -237,7 +237,6 @@ export default {
       }
       this.$vuecombiListAxios('/employee/empTaApplylistvue.do', param).then(
         function (res) {
-          console.log('return : ' + JSON.stringify(res));
           vm.grouplist2 = res.data.total_rest;
           vm.grouplist = res.data.taApplylist;
           vm.counttaApplylist = res.data.counttaApplylist;
@@ -251,24 +250,13 @@ export default {
       param.append('loginId', this.loginID);
       this.$vuecombiListAxios('/employee/restinfo.do', param).then(
         (response) => {
-          // console.log('아직 안담았음============================');
-          // console.log('response : ' + JSON.stringify(response));
-          // console.log('response : ' + JSON.stringify(response.data));
-          // console.log('response : ' + JSON.stringify(response.data.rest_info));
-
           this.rest_info = response.data.rest_info;
-          // console.log('담았음============================');
-          // console.log(this.rest_info);
-          // console.log('zzzzzz : ' + this.rest_info.emp_no);
+
           this.detailModal();
         }
       );
     },
     detailModal: async function () {
-      // console.log('모달밖this.rest_info  : ' + this.rest_info);
-      // console.log('Mdept_name : ' + this.rest_info.dept_name);
-      // console.log('this.Memp_num : ' + this.rest_info.emp_no);
-      console.log('hp : ' + this.rest_info.hp);
       const modal = await openModal(vueEmpTaApplyModal, {
         dept_name: this.rest_info.dept_name,
         loginName: this.loginName,
@@ -281,15 +269,13 @@ export default {
       };
     },
     fn_rest_reject: async function (atd_no) {
-      console.log('반려버튼 눌렀다');
-      console.log('여기 atd_no : ' + atd_no);
       //반려버튼 눌렀을 때 모달창 띄우기
       const modal = await openModal(vueEmpTaApplyRejModal, {
         Matd_no: atd_no,
       });
 
       modal.onclose = () => {
-        this.searchTaApply();
+        this.searchTaApply(this.cpage);
       };
     },
   },
