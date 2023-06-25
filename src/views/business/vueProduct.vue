@@ -221,6 +221,7 @@ export default {
     productSearch: function (cpage) {
       let vm = this;
       this.cpage = cpage || 1;
+
       let param = new URLSearchParams();
       console.log(this.cpage);
       param.append('pageSize', this.pageSize);
@@ -246,7 +247,8 @@ export default {
         (res) => {
           alert('추가되었습니다!');
           vm.addstock = res.data.addStock;
-          this.productSearch();
+          vm.addStock = [];
+          vm.productSearch();
         }
       );
     },

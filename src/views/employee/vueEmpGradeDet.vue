@@ -97,7 +97,7 @@ import vueEmpGradeDetModal from './vueEmpGradeDetModal.vue';
 import { openModal } from 'jenesius-vue-modal';
 
 export default {
-  props: { empNameDet: String },
+  props: { empNameDet: String, rankname: String },
   watch: {
     empNameDet() {
       this.detId = this.empNameDet;
@@ -110,6 +110,7 @@ export default {
       prmtn_date: '',
       prmtn_name: '',
       prankCd: '',
+      prankName: '',
       action: '',
       empno: '',
       detId: '',
@@ -138,6 +139,7 @@ export default {
   mounted() {
     //console.log(this.$el);
     this.detId = this.empNameDet;
+    this.prankName = this.rankname;
     this.detailempgrade();
     // console.log('mounted=================================');
     // console.log(this.empNameDet);
@@ -183,6 +185,7 @@ export default {
       const modal = await openModal(vueEmpGradeDetModal, {
         ploginID: this.empId,
         prmtn_name: this.userNm,
+        rankname: this.prankName,
         dEmpNo: this.dEmpNo,
       });
 

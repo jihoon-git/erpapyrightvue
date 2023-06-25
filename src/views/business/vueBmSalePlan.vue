@@ -60,6 +60,7 @@
         eventid="ProSCombo"
         v-model="product_no"
         @change="ProSclick"
+        :key="key"
         ref="Com_combo"
         style="width: 70px"
       ></ProSCombo>
@@ -242,6 +243,7 @@ export default {
       loginId: '',
       totalPage: 1,
       cpage: 1,
+      key: '',
     };
   },
   components: {
@@ -280,7 +282,7 @@ export default {
       let param = new URLSearchParams();
       let vm = this;
       param.append('empname', this.empname);
-      param.append('searchdate', this.scsearchdate); // (db에 저장된 이름, )
+      param.append('searchdate', this.scsearchdate);
       param.append('lcategory', this.lcategory_cd);
       param.append('mcategory', this.mcategory_cd);
       param.append('productname', this.product_no);
@@ -297,7 +299,11 @@ export default {
       );
     },
     ProLclick: function () {
-      this.emitter.emit('ProLCombo', this.lcategory_cd);
+      //this.emitter.emit('ProLCombo', this.lcategory_cd);
+      this.key += 1;
+      if (this.lcategory_cd == '') {
+        this.product_no = '';
+      }
     },
     ProMclick: function () {
       this.emitter.emit('ProMCombo', this.mcategory_cd);
