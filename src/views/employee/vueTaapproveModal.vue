@@ -30,7 +30,7 @@
                     margin: 0 auto;
                   "
                   type="text"
-                  v-model="deptcd"
+                  v-model="deptname"
                   readonly
                 />
               </td>
@@ -57,7 +57,7 @@
                     margin: 0 auto;
                   "
                   type="text"
-                  v-model="rest_cd"
+                  v-model="rest_name"
                   readonly
                 />
               </td>
@@ -269,7 +269,9 @@ export default {
       atd_yn: false,
 
       deptcd: 0,
+      deptname: '',
       rest_cd: 0,
+      rest_name: '',
       empnamepop: '',
       empnopop: 0,
       tell: '',
@@ -293,8 +295,6 @@ export default {
   created() {
     this.atd_no = this.receive_atd_no;
     this.atd_yn = this.receive_atd_yn;
-    console.log('created atd_no ' + this.atd_no);
-    console.log('created atd_yn ' + this.atd_yn);
   },
   mounted() {
     this.fn_detailone();
@@ -308,10 +308,9 @@ export default {
       this.$vuecombiListAxios('/employee/detailone.do', params).then(function (
         response
       ) {
-        console.log('fn_detailone response' + JSON.stringify(response));
         vm.empnopop = response.data.detailone.empnopop;
         vm.empnamepop = response.data.detailone.empnamepop;
-        vm.rest_cd = response.data.detailone.rest_cd;
+        vm.rest_name = response.data.detailone.rest_name;
         vm.rest_rsn = response.data.detailone.rest_rsn;
         vm.reject_rsn = response.data.detailone.reject_rsn;
         vm.app_date = response.data.detailone.app_date;
@@ -320,21 +319,26 @@ export default {
         vm.ed_date = response.data.detailone.ed_date;
         //vm.rest_day = response.data.detailone.rest_day;
         vm.checked = response.data.detailone.atd_yn;
-        vm.deptcd = response.data.detailone.deptcd;
+        vm.deptname = response.data.detailone.dept_name;
         vm.tell = response.data.detailone.tell;
       });
     },
     fn_update: function () {
-      //let vm = this;
-      let params = new URLSearchParams();
-      params.append('atd_no', this.atd_no);
-      params.append('atd_yn', this.checked);
-      params.append('reject_rsn', this.reject_rsn);
-      params.append('action', 'U');
-      params.append('name', this.empnamepop);
-      params.append('atd_no', this.atd_no);
-      this.$vuecombiListAxios('/employee/taapproveupdate.do', params).then();
-      closeModal();
+      const msg = this.checked == 'y' ? '승인' : '반려';
+      if (confirm(msg + ' 하시겠습니까?')) {
+        //let vm = this;
+        let params = new URLSearchParams();
+        params.append('atd_no', this.atd_no);
+
+        params.append('atd_yn', this.checked);
+
+        params.append('reject_rsn', this.reject_rsn);
+        params.append('action', 'U');
+        params.append('name', this.empnamepop);
+        params.append('atd_no', this.atd_no);
+        this.$vuecombiListAxios('/employee/taapproveupdate.do', params).then();
+        closeModal();
+      }
     },
     modalClose: function () {
       closeModal();

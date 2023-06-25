@@ -11,16 +11,12 @@
       <span class="fr">
         대분류명
         <input type="text" v-model="searchname" />
-        <a
-          class="btnType blue"
-          href=""
-          @click.prevent="searchProduct(this.searchname)"
+        <a class="btnType blue" href="" @click.prevent="schPromotion()"
           ><span>검색</span></a
         >
       </span>
     </p>
     <div align="right">
-      <!-- 초기화면에서 등록을 누르면 action='I'로 해서 모달에 넘기기 -->
       <a href="" class="btnType blue" @click.prevent="registerProductCodeBtn()"
         ><span>등록</span></a
       >
@@ -64,7 +60,7 @@
         :page-count="totalPage"
         :page-range="5"
         :margin-pages="0"
-        :click-handler="clickCallback"
+        :click-handler="searchProduct"
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pagination'"
@@ -78,7 +74,6 @@
 import Paginate from 'vuejs-paginate-next';
 import { openModal } from 'jenesius-vue-modal';
 import vueProductCodeModal from './vueProductCodeModal.vue';
-// import { vuecombiListAxios } from '../system';
 
 export default {
   mounted() {
@@ -106,86 +101,56 @@ export default {
   },
 
   methods: {
+    schPromotion: function () {
+      this.searchKey = '';
+      this.searchKey = 'Z';
+      this.searchProduct();
+    },
     //화면초기
-    searchProduct: function (searchname) {
+    searchProduct: function (currentPage) {
+      this.currentPage = currentPage || 1;
       let vm = this;
 
       let params = new URLSearchParams();
-      if (searchname == null) {
+      if (this.searchKey == 'Z') {
+        params.append('searchname', this.searchname);
         params.append('cpage', this.currentPage);
         params.append('pageSize', this.pageSize);
       } else {
-        params.append('searchname', this.searchname),
-          params.append('cpage', this.currentPage);
+        params.append('cpage', this.currentPage);
         params.append('pageSize', this.pageSize);
       }
-
-      this.$vuecombiListAxios('/system/vueProductCodeList.do', params).then(
-        function (response) {
-          console.log('searchProduct response' + JSON.stringify(response));
-
+      this.$vuecombiListAxios('/system/vueProductCodeList.do', params)
+        .then(function (response) {
           //paginate 설정
           vm.totalCnt = response.data.countproductlist;
           vm.prodlist = response.data.productCodelist;
           //page를 전역변수 사용
           vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
-          //vm.totalPage = vm.page();
-
-          vm.currentPage == 1
-            ? (vm.grdNo = 1)
-            : (vm.grdNo = 5 * (vm.currentPage - 1) + 1);
-
-          for (let value of vm.prodlist) {
-            value.indexNew = vm.grdNo++;
-          }
-        }
-      );
+        })
+        .catch((err) => {
+          alert(err);
+        });
     },
 
-    //paginate callback
-    clickCallback: function (pageNum) {
-      console.log(pageNum);
-
-      this.currentPage = pageNum;
-      //this.Paginate.pageNum = 10;
-      this.searchProduct();
-    },
-    //전역변수로 이미 설정
-    //page 설정. 데이터를 page로 나눠줌.
-    // page: function () {
-    //   var total = this.totalCnt;
-    //   var page = this.pageSize;
-    //   var xx = total % page;
-    //   var result = parseInt(total / page);
-
-    //   if (xx == 0) {
-    //     return result;
-    //   } else {
-    //     result = result + 1;
-    //     return result;
-    //   }
-    // },
+    //초기화면의 등록버튼을 누르면 action = 'I'
     registerProductCodeBtn: async function () {
       const modal = await openModal(vueProductCodeModal, {
-        //vueProductCodeModal의 saveModal에 action값 넘김
         saveModalAction: 'I',
-      }); //상세보기 클릭은 값을 넘겨야함.
+      });
 
       modal.onclose = () => {
-        console.log('Close : ');
         this.searchProduct();
       };
     },
-    // 제품 대분류 관리 초기화면에서 요소(대분류명, 대분류코드)를 클릭하면 상세조회
+    // 초기화면에서 요소를 클릭하면 해당 상세보기. 이때 action='U'
     productCodeDetail: async function (detail_code) {
       const modal = await openModal(vueProductCodeModal, {
-        //vueProductCodeModal의 saveModal에 detail_code 값, action 값 넘김)
         sendDetailCode: detail_code,
         saveModalAction: 'U',
-      }); //상세보기 클릭은 값을 넘겨야함.
+      });
 
       modal.onclose = () => {
-        console.log('Close : ');
         this.searchProduct();
       };
     },

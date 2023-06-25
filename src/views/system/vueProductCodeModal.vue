@@ -80,26 +80,20 @@
   </div>
 </template>
 <script>
-//import { vuecombiListAxios } from '../system';
-
 import { closeModal } from 'jenesius-vue-modal';
-
 export default {
   props: {
-    //registerProductCodeBtn(), productCodeDetail action
+    //부모창에서 넘어온 action, codedetail
     saveModalAction: String,
-    //productCodeDetail() codedetail, action
     sendDetailCode: String,
-    //sendActionValue: String,
   },
   data() {
     return {
       modalDetailName: '',
       modalDetailCode: '',
 
-      //props로 가져온 registerProductCodeBtn() action
+      //부모창에서 넘어온 action, codedetail
       receiveAction: '',
-      //props로 가져온 productCodeDetail() codedetail
       receiveDetailCode: '',
     };
   },
@@ -109,16 +103,13 @@ export default {
   },
 
   mounted() {
-    //console.log('mounted' + this.$el);
-
-    //mounted가 아닌 beforemounted나 creacted에서 선언했어야 하는 값
     if (this.receiveAction == 'U') {
       this.modalDetail();
     }
   },
 
   methods: {
-    //input box is empty? 공통함수.태그에 id를 넣어서 해당아이디의 값을 있는지 없는지.
+    //input 비어있나
     isValidated: function () {
       let chk = this.$checkNotEmpty([
         ['detail_name', '제품 대분류명을 입력해 주세요.'],
@@ -126,7 +117,7 @@ export default {
       ]);
       return chk;
     },
-    //제품 대분류 관리 상세조회 mounted, updated
+    //제품 대분류 관리 상세조회
     modalDetail: function () {
       let vm = this;
       let params = new URLSearchParams();
@@ -136,9 +127,6 @@ export default {
           vm.modalDetailName = response.data.detailproductcode.detail_name;
           vm.modalDetailCode = response.data.detailproductcode.detail_code;
           vm.receiveAction = 'U';
-
-          console.log('modalDetail response ' + JSON.stringify(response));
-          console.log('modalDetail action ' + vm.action);
         }
       );
     },
@@ -147,18 +135,14 @@ export default {
       let vm = this;
       let params = new URLSearchParams();
       if (this.isValidated()) {
-        //대분류 등록시에는 mounted
-        //무조건 insert를 타야하는 구조임. 그이후에 update, delete 실행후 중복체크도 같이 됨.
+        //무조건 insert 이후에 update, delete 실행후 에러코드를 통해 중복체크
         if (this.receiveAction == 'I') {
           params.append('action', 'I');
           params.append('detail_name', this.modalDetailName);
           params.append('detail_code', this.modalDetailCode);
-          console.log(
-            'modalSave receiveAction params' + JSON.stringify(params)
-          );
 
-          this.$vuecombiListAxios('/system/productcodeinsert.do', params).then(
-            function (response) {
+          this.$vuecombiListAxios('/system/productcodeinsert.do', params)
+            .then(function (response) {
               if (response.data.result == 'FAILNAME') {
                 alert(
                   '제품 대분류 명이 중복 되었습니다. \n 확인 후 다시 입력해주세요. '
@@ -171,24 +155,29 @@ export default {
                 alert('저장 되었습니다');
                 closeModal(vm);
               }
-              console.log('modalSave response ' + JSON.stringify(response));
-            }
-          );
+            })
+            .catch((err) => {
+              alert(err);
+            });
         } else if (this.receiveAction == 'U') {
-          //currentPage param?
           params.append('action', 'U');
           params.append('detail_name', this.modalDetailName);
           params.append('detail_code', this.modalDetailCode);
 
-          console.log('modalSave params' + JSON.stringify(params));
-
-          this.$vuecombiListAxios('/system/productcodeinsert.do', params).then(
-            function (response) {
-              console.log('modalSave response ' + JSON.stringify(response));
-            }
-          );
-          alert('수정 되었습니다.');
-          closeModal(vm);
+          this.$vuecombiListAxios('/system/productcodeinsert.do', params)
+            .then(function (response) {
+              if (response.data.result == 'FAILNAME') {
+                alert(
+                  '제품 대분류 명이 중복 되었습니다. \n 확인 후 다시 입력해주세요. '
+                );
+              } else {
+                alert('수정 되었습니다');
+                closeModal(vm);
+              }
+            })
+            .catch((err) => {
+              alert(err);
+            });
         }
       }
     },
@@ -197,13 +186,14 @@ export default {
       let params = new URLSearchParams();
       params.append('action', 'D');
       params.append('detail_code', vm.modalDetailCode);
-      this.$vuecombiListAxios('/system/productcodeinsert.do', params).then(
-        function () {
+      this.$vuecombiListAxios('/system/productcodeinsert.do', params)
+        .then(function () {
           alert('삭제되었습니다.');
-        }
-      );
-      this.modalDetail();
-      closeModal(vm);
+          closeModal(vm);
+        })
+        .catch((err) => {
+          alert(err);
+        });
     },
     /** 닫기 버튼  */
     modalClose: function () {
