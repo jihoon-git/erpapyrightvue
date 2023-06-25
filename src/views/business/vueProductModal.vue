@@ -81,6 +81,7 @@
                 type="all"
                 selvalue=""
                 eventid="ProSCombo"
+                id="product_no"
                 v-model="product_no"
                 @change="ProSclick"
                 ref="Com_combo"
@@ -117,6 +118,7 @@
             <td>
               <input
                 type="text"
+                id="price"
                 v-model="insertPrice"
                 style="
                   width: 150px;
@@ -187,6 +189,7 @@ export default {
       lcategory_cd: '',
       mcategory_cd: '',
       product_no: '',
+      //product_name: '',
       paramsave: '',
       insertStock: '',
       price: '',
@@ -266,38 +269,36 @@ export default {
         }
       }
     },
-
     productSave: function () {
+      let chk = [
+        ['lcategory_cd', '제품대분류를 선택해주세요.'],
+        ['mcategory_cd', '제품중분류를 선택해주세요.'],
+        ['product_no', '제품을 선택해주세요.'],
+        ['price', '단가를 선택해주세요.'],
+        ['insertStockPop', '수량을 선택해주세요.'],
+      ];
+
+      if (!this.$checkNotEmpty(chk)) {
+        return;
+      }
+
       let paramsave = new URLSearchParams();
       paramsave.append('lcategory_cd', this.lcategory_cd);
       paramsave.append('mcategory_cd', this.mcategory_cd);
       paramsave.append('product_no', this.product_no);
       paramsave.append('price', this.insertPrice);
       paramsave.append('insertStock', this.insertStockPop);
-      if (
-        this.lcategory_cd == '' ||
-        this.mcategory_cd == '' ||
-        this.product_no == '' ||
-        this.insertPrice == '' ||
-        this.insertStockPop == ''
-      ) {
-        alert('빈칸을 채워주세요');
-        console.log(this.price);
-        console.log(this.insertStock);
-      } else {
-        this.$vuecombiListAxios(
-          '/business/vueProductInsertStock.do',
-          paramsave
-        ).then((response) => {
-          if (response.data.result == 'SUCCESS') {
-            alert('저장되었습니다!');
-          } else {
-            alert('오류...');
-          }
-          //this.close();
-        });
-        this.close();
-      }
+      this.$vuecombiListAxios(
+        '/business/vueProductInsertStock.do',
+        paramsave
+      ).then((response) => {
+        if (response.data.result == 'SUCCESS') {
+          alert('등록되었습니다!');
+        } else {
+          alert('오류...');
+        }
+      });
+      this.close();
     },
     /** 닫기 버튼  */
     close: function () {
@@ -309,6 +310,9 @@ export default {
       this.emitter.emit('ProLCombo', this.lcategory_cd);
       this.product_no = '';
       this.mcategory_cd = '';
+      //this.lcategory_cd = '';
+      this.addMcategory_cd = '';
+      this.addProduct_cd = '';
       this.keys += 1;
       this.mFlag = true;
     },
