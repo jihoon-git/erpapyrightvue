@@ -76,7 +76,7 @@
               >
             </td>
             <td>{{ list.empname }}</td>
-            <td>{{ list.rest_cd }}</td>
+            <td>{{ list.rest_name }}</td>
             <td>{{ list.st_date }}</td>
             <td>{{ list.ed_date }}</td>
             <td>{{ list.app_date }}</td>
@@ -94,7 +94,7 @@
       :page-count="totalPage"
       :page-range="5"
       :margin-pages="0"
-      :click-handler="clickCallback"
+      :click-handler="searchapprove"
       :prev-text="'Prev'"
       :next-text="'Next'"
       :container-class="'pagination'"
@@ -154,17 +154,19 @@ export default {
         this.empname = '';
         return false;
       }
-      const checkDate = this.$checkStartEndDate(this.srcsdate, this.srcedate);
+      const checkDate = this.$checkStartEndDate(this.appsdate, this.appedate);
       if (!checkDate) {
         // 검색 종료일 초기화
         this.srcedate = '';
         return false;
       }
+
       this.searchKey = 'Z';
       this.searchapprove();
     },
 
-    searchapprove: function () {
+    searchapprove: function (currentPage) {
+      this.currentPage = currentPage || 1;
       let vm = this;
       let params = new URLSearchParams();
 
@@ -184,7 +186,6 @@ export default {
       }
       this.$vuecombiListAxios('/employee/taapprovelistvue.do', params).then(
         function (response) {
-          console.log('searchapprove response ' + JSON.stringify(response));
           vm.listTaapprove = response.data.taapprovelist; //수정
           vm.totalCnt = response.data.counttaApprovelist;
           vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
@@ -199,12 +200,7 @@ export default {
         }
       );
     },
-    //전역변수로 page 설정. 데이터를 page로 나눠주는 역할. 이미 설정
-    //paginate callback
-    clickCallback: function (pageNum) {
-      this.currentPage = pageNum;
-      this.searchapprove();
-    },
+
     //클릭시 상세페이지
     fn_detailone: async function (atd_no, atd_yn) {
       if (atd_yn == '승인대기') {
@@ -217,7 +213,6 @@ export default {
         receive_atd_yn: this.result,
       });
       modal.onclose = () => {
-        console.log('Close : ');
         this.searchapprove();
       };
     },

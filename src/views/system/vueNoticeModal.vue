@@ -48,6 +48,7 @@
                     type="text"
                     class="inputTxt p100"
                     name="notice_titlefile"
+                    id="notice_titlefile"
                     v-model="notice_titlefile"
                   />
                 </td>
@@ -59,6 +60,7 @@
                   <textarea
                     class="inputTxt p100"
                     name="notice_detfile"
+                    id="notice_detfile"
                     v-model="notice_detfile"
                   >
                   </textarea>
@@ -73,6 +75,7 @@
                     type="file"
                     class="inputTxt p100"
                     name="addfile"
+                    v-if="this.noticeUserType == 'A'"
                     @change="onFileChange"
                   />
                 </td>
@@ -154,7 +157,6 @@ export default {
     //유저타입
     this.noticeUserType = this.$store.state.loginInfo.userType;
 
-    //console.log('created noticeObject ' + String.valueOf(this.noticeObject));
     if (this.action == 'U') {
       this.notice_no = this.noticeObject.notice_no;
     }
@@ -200,9 +202,7 @@ export default {
       this.$vuecombiListAxios('/system/noticefiledownaload.do', params).then(
         (res) => {
           if (res.status == 200) {
-            //  console.log(res);
             var FILE = window.URL.createObjectURL(new Blob([res.data]));
-            // console.log('FILE : ' + FILE);
             var docUrl = document.createElement('a');
             docUrl.href = FILE;
             docUrl.setAttribute('download', vm.filename);
@@ -212,16 +212,21 @@ export default {
         }
       );
     },
+    //input 비어있나
+    isValidated: function () {
+      let chk = this.$checkNotEmpty([
+        ['notice_titlefile', '공지사항의 제목을 입력해 주세요.'],
+        ['notice_detfile', '공지사항의 내용을 입력해 주세요.'],
+      ]);
+      return chk;
+    },
     //상세조회 클릭시
     fn_detailone: function () {
       let vm = this;
       let params = new URLSearchParams();
       params.append('notice_no', this.noticeObject.notice_no);
-      console.log('fn_detailone params ' + params);
       this.$vuecombiListAxios('/system/vueNoticeDetailone.do', params).then(
         function (response) {
-          console.log('fn_detailone response' + JSON.stringify(response));
-
           vm.notice_no = response.data.detailone.notice_no;
           vm.writerfile = response.data.detailone.writer;
           vm.notice_datefile = response.data.detailone.notice_date;
@@ -258,35 +263,38 @@ export default {
       //let vm = this;
       let formData = new FormData(document.getElementById('myForm'));
       formData.enctype = 'multipart/form-data';
+      if (this.isValidated()) {
+        if (this.receiveAction == 'I') {
+          formData.append('action', 'I');
+          formData.append('loginID', this.$store.state.loginInfo.loginId);
+          formData.append('writerfile', this.writerfile);
+          formData.append('notice_titlefile', this.notice_titlefile);
+          formData.append('notice_detfile', this.notice_detfile);
 
-      if (this.receiveAction == 'I') {
-        formData.append('action', 'I');
-        formData.append('loginID', this.$store.state.loginInfo.loginId);
-        formData.append('writerfile', this.writerfile);
-        formData.append('notice_titlefile', this.notice_titlefile);
-        formData.append('notice_detfile', this.notice_detfile);
+          alert('저장 되었습니다.');
+          closeModal();
+        } else if (this.receiveAction == 'U') {
+          formData.append('action', 'U');
 
-        this.$vuecombiListAxios('/system/noticesavefile.do', formData).then();
-        alert('저장 되었습니다.');
-        closeModal();
-      } else if (this.receiveAction == 'U') {
-        formData.append('action', 'U');
-        formData.append('noticeno', this.notice_no);
-        formData.append('loginID', this.$store.state.loginInfo.loginId);
-        formData.append('writerfile', this.writerfile);
-        formData.append('notice_titlefile', this.notice_titlefile);
-        formData.append('notice_detfile', this.notice_detfile);
+          formData.append('noticeno', this.notice_no);
+          formData.append('loginID', this.$store.state.loginInfo.loginId);
+          formData.append('writerfile', this.writerfile);
+          formData.append('notice_titlefile', this.notice_titlefile);
+          formData.append('notice_detfile', this.notice_detfile);
 
-        this.$vuecombiListAxios('/system/noticesavefile.do', formData).then();
-
-        alert('수정 되었습니다.');
-        closeModal();
+          alert('수정 되었습니다.');
+          closeModal();
+        }
       }
+      this.$vuecombiListAxios('/system/noticesavefile.do', formData)
+        .then()
+        .catch((err) => {
+          alert(err);
+        });
     },
     btnDeletefile: function (notice_no) {
       //let vm = this;
       let params = new URLSearchParams();
-      //console.log('btnDeletefile notice_no' + notice_no);
       params.append('noticeno', notice_no);
       params.append('action', 'D');
       this.$vuecombiListAxios('/system/noticesavefile.do', params).then();

@@ -73,7 +73,7 @@
       :page-count="totalPage"
       :page-range="5"
       :margin-pages="0"
-      :click-handler="clickCallback"
+      :click-handler="searchnotice"
       :prev-text="'Prev'"
       :next-text="'Next'"
       :container-class="'pagination'"
@@ -111,9 +111,7 @@ export default {
   },
   mounted() {
     this.searchnotice();
-
     this.noticeUserType = this.$store.state.loginInfo.userType;
-    console.log('created userType' + this.noticeUserType);
   },
   computed: {},
   components: {
@@ -128,12 +126,7 @@ export default {
 
       return year + '-' + month + '-' + day;
     },
-    //전역변수로 page 설정. 데이터를 page로 나눠주는 역할. 이미 설정
-    //paginate callback
-    clickCallback: function (pageNum) {
-      this.currentPage = pageNum;
-      this.searchnotice();
-    },
+
     //검색 클릭시
     schPromotion: function () {
       this.searchKey = '';
@@ -148,9 +141,10 @@ export default {
       this.searchnotice();
     },
     //공지사항 리스트
-    searchnotice: function () {
+    searchnotice: function (currentPage) {
       let vm = this;
       let params = new URLSearchParams();
+      this.currentPage = currentPage || 1;
       if (this.searchKey == 'Z') {
         params.append('pageSize', this.pageSize);
         params.append('cpage', this.currentPage);
@@ -177,7 +171,6 @@ export default {
         receiveAction: 'U',
       });
       modal.onclose = () => {
-        console.log('Close : ');
         this.searchnotice();
       };
     },
@@ -189,12 +182,8 @@ export default {
           writer: this.$store.state.loginInfo.loginId,
           today: this.getToday(),
         },
-        //등록버튼누르면 바로 나오게
-        // this.writerfile = this.$store.state.loginInfo.loginId;
-        // this.notice_datefile = this.getToday();
       });
       modal.onclose = () => {
-        console.log('Close : ');
         this.searchnotice();
       };
     },
