@@ -35,6 +35,7 @@
                     name="profileUpload"
                     id="profileUpload"
                     @change="uploadFile"
+                    :disabled="profileUploaddisabled"
                   />
                 </td>
                 <th scope="row">사번</th>
@@ -107,6 +108,7 @@
                     id="detSchoolCd"
                     type="sel"
                     :selvalue="detSchoolCd"
+                    :disabled="detSchoolCddisabled"
                     eventid="selectSchool"
                     v-model="detSchoolCd"
                     style="width: 100px; height: 20px"
@@ -141,8 +143,10 @@
                     name="email"
                     id="email"
                     ref="refemail"
+                    :disabled="emaildisabled"
                   />
                 </td>
+
                 <th scope="row">연락처<span class="font_red">*</span></th>
                 <td>
                   <input
@@ -154,6 +158,7 @@
                     ref="refhp1"
                     id="hp1"
                     name="hp1"
+                    :disabled="hp1disabled"
                   />
 
                   -
@@ -166,6 +171,7 @@
                     ref="refhp2"
                     id="hp2"
                     name="hp2"
+                    :disabled="hp2disabled"
                   />
                   -
                   <input
@@ -177,6 +183,7 @@
                     ref="refhp3"
                     id="hp3"
                     name="hp3"
+                    :disabled="hp3disabled"
                   />
                 </td>
               </tr>
@@ -197,9 +204,10 @@
                   <input
                     type="button"
                     value="우편번호 찾기"
-                    onclick="execDaumPostcode()"
+                    @click="DaumPostcode()"
                     id="post_cd"
                     style="width: 35%; height: 50%; cursor: pointer"
+                    :disabled="postcddisabled"
                   />
                 </td>
                 <th scope="row">은행계좌<span class="font_red">*</span></th>
@@ -211,6 +219,7 @@
                     name="detBankCd"
                     id="detBankCd"
                     :selvalue="detBankCd"
+                    :disabled="detBankCddisabled"
                     eventid="selectBank"
                     v-model="detBankCd"
                     style="width: 100px; height: 20px"
@@ -230,6 +239,7 @@
                     v-model="account"
                     ref="refaccount"
                     name="account"
+                    :disabled="accountdisabled"
                   />
                 </td>
               </tr>
@@ -254,6 +264,7 @@
                     v-model="det_addr"
                     name="det_addr"
                     id="det_addr"
+                    :disabled="detaddrdisabled"
                   />
                 </td>
               </tr>
@@ -280,6 +291,7 @@
                     id="detUserType"
                     name="detUserType"
                     :selvalue="detUserType"
+                    :disabled="detUserTypedisabled"
                     eventid="selectUsertype"
                     v-model="detUserType"
                     style="width: 100px; height: 20px"
@@ -301,6 +313,7 @@
                     id="detDeptCd"
                     name="detDeptCd"
                     :selvalue="detDeptCd"
+                    :disabled="detDeptCddisabled"
                     eventid="selectDept"
                     v-model="detDeptCd"
                     style="width: 100px; height: 20px"
@@ -316,6 +329,7 @@
                     id="detRankCd"
                     type="sel"
                     :selvalue="detRankCd"
+                    :disabled="detRankCddisabled"
                     eventid="selectRank"
                     v-model="detRankCd"
                     style="width: 100px; height: 20px"
@@ -338,6 +352,7 @@
                     v-model="st_date"
                     name="st_date"
                     style="width: 90%; height: 80%"
+                    :disabled="stdatedisabled"
                   />
                 </td>
                 <th scope="row">재직구분</th>
@@ -371,6 +386,7 @@
                       placeholder="미협상"
                       name="year_pay"
                       id="year_pay"
+                      :disabled="yearpaydisabled"
                     />
                   </template>
                   <template v-else>
@@ -381,6 +397,7 @@
                       v-model="year_pay"
                       name="year_pay"
                       id="year_pay"
+                      :disabled="yearpaydisabled"
                     />
                   </template>
                   <template v-if="pay_nego == 0">
@@ -472,8 +489,9 @@
 </template>
 
 <script>
-import { closeModal } from 'jenesius-vue-modal';
+import { closeModal, pushModal, popModal } from 'jenesius-vue-modal';
 import ComCombo from '@/components/common/ComCombo.vue';
+import DaumZipCode from '@/components/common/DaumZipCode.vue';
 
 export default {
   props: { empMgtDetObj: Object },
@@ -513,11 +531,28 @@ export default {
       lved_date: '',
       status_cd: '',
       profilePreview: '',
+      currentEmpStatus: '', //재직여부
 
       negoBtn_show: false,
       retirementDate: false,
       vacationPeriod: false,
       updateBtnArea_show: false,
+
+      emaildisabled: false,
+      detSchoolCddisabled: false,
+      hp1disabled: false,
+      hp2disabled: false,
+      hp3disabled: false,
+      postcddisabled: false,
+      detBankCddisabled: false,
+      accountdisabled: false,
+      detaddrdisabled: false,
+      detUserTypedisabled: false,
+      detDeptCddisabled: false,
+      detRankCddisabled: false,
+      stdatedisabled: false,
+      yearpaydisabled: false,
+      profileUploaddisabled: false,
     };
   },
   components: {
@@ -527,11 +562,30 @@ export default {
   mounted() {
     this.empMgtDet = this.empMgtDetObj;
     this.fn_empMgtDetail();
-    console.log('this.empMgtDetObj : ' + JSON.stringify(this.empMgtDetObj));
   },
   methods: {
+    /** 전역컴포넌트 다음 api 함수 */
+    DaumPostcode: async function () {
+      //다음 전역 컴포넌트 열기
+      await pushModal(DaumZipCode);
+
+      //컴포넌트 반환값 가져오기
+      this.emitter.on('daumZipResult', (res) => {
+        if (res) {
+          this.zip_code = res.zonecode;
+
+          // addressType이 R이면 도로명주소, 아니면 지번주소로 입력
+          if (res.addressType == 'R') {
+            this.addr = res.roadAddress;
+          } else {
+            this.addr = res.jibunAddress;
+          }
+          popModal();
+        }
+      });
+    },
+
     fn_empMgtDetail: function () {
-      console.log('상세보기 : ' + this.empMgtDet);
       this.emp_no = this.empMgtDet.emp_no; //사번
       this.loginID = this.empMgtDet.loginID; //아이디
       this.name = this.empMgtDet.name; //이름
@@ -563,28 +617,19 @@ export default {
       let file_name = this.empMgtDet.file_name;
       //let filearr = [];
       let previewhtml = '';
-      console.log(
-        '여기가 this.empMgtDet.file_name :' + this.empMgtDet.file_name
-      );
-      console.log('여기가 file_name :' + file_name);
 
       if (file_name == '' || file_name == null || file_name == undefined) {
         previewhtml = '';
       } else {
         this.filearr = file_name.split('.');
-        console.log('Zzzz : ' + this.filearr[1]);
 
         if (this.filearr[1] == 'jpg' || this.filearr[1] == 'png') {
           previewhtml =
             "<a>   <img src='" +
             this.empMgtDet.file_nadd +
             "' style='width: 200px; height: 130px;' />  </a>";
-          console.log('this.empMgtDet.file_nadd' + this.empMgtDet.file_nadd);
-          console.log('this.previewhtml' + previewhtml);
         } else {
           previewhtml = '<a>' + this.empMgtDet.file_name + '</a>';
-          console.log('this.empMgtDet.file_name : ' + this.empMgtDet.file_name);
-          console.log('this.previewhtml' + previewhtml);
         }
       }
       this.profilePreview = previewhtml;
@@ -604,6 +649,21 @@ export default {
         this.negoBtn_show = false;
         this.vacationPeriod = false;
         this.retirementDate = true;
+        this.emaildisabled = true;
+        this.detSchoolCddisabled = true;
+        this.hp1disabled = true;
+        this.hp2disabled = true;
+        this.hp3disabled = true;
+        this.postcddisabled = true;
+        this.detBankCddisabled = true;
+        this.accountdisabled = true;
+        this.detaddrdisabled = true;
+        this.detUserTypedisabled = true;
+        this.detDeptCddisabled = true;
+        this.detRankCddisabled = true;
+        this.stdatedisabled = true;
+        this.yearpaydisabled = true;
+        this.profileUploaddisabled = true;
       } else if (this.empMgtDet.status_cd == 'B') {
         //휴직
         this.updateBtnArea_show = true;
@@ -644,7 +704,6 @@ export default {
 
     fnUpdateEmp: function () {
       //수정 버튼을 눌렀을때
-      console.log('수정버튼을 눌렀음!');
 
       //이메일 정규식
       const emailRules =
@@ -674,40 +733,36 @@ export default {
           this.$refs.refaccount.focus();
           return false;
         } else {
-          confirm('사원 정보를 수정 하시겠습니까?');
+          let result = confirm('사원 정보를 수정 하시겠습니까?');
+          if (result) {
+            let empViewForm = document.getElementById('detail');
+            empViewForm.enctype = 'multipart/form-data';
 
-          let empViewForm = document.getElementById('detail');
-          empViewForm.enctype = 'multipart/form-data';
+            let fileData = new FormData(empViewForm);
+            fileData.append('detLoginId', this.loginID);
 
-          let fileData = new FormData(empViewForm);
-          fileData.append('detLoginId', this.loginID);
-
-          console.log('fileData : ' + fileData);
-
-          this.$vuecombiListAxios('/employee/updateEmp.do', fileData).then(
-            function (res) {
-              console.log('수정 RESPONSE: ' + res);
-              if (res.data.result == 'SUCCESS') {
-                alert(res.data.resultMsg);
-                closeModal();
-              } else {
-                alert('수정 실패하였습니다.');
+            this.$vuecombiListAxios('/employee/updateEmp.do', fileData).then(
+              function (res) {
+                if (res.data.result == 'SUCCESS') {
+                  alert(res.data.resultMsg);
+                  closeModal();
+                } else {
+                  alert('수정 실패하였습니다.');
+                }
               }
-            }
-          );
+            );
+          }
         }
       }
     },
 
     uploadFile: function (event) {
-      console.log('업로드 파일 함수 안!!!!');
       let upfile = this.profilePreview;
       console.log(upfile);
-      console.log(event.target);
 
       this.profilePreview = '';
       let image = event.target;
-      console.log(image.files);
+
       let imgpath = '';
       if (image.files[0]) {
         imgpath = window.URL.createObjectURL(image.files[0]);
@@ -716,7 +771,11 @@ export default {
 
         let previewhtml = '';
 
-        if (filearr == 'image/jpg' || filearr == 'image/png') {
+        if (
+          filearr == 'image/jpeg' ||
+          filearr == 'image/png' ||
+          filearr == 'image/jpg'
+        ) {
           previewhtml =
             "<img src='" +
             imgpath +
@@ -724,7 +783,6 @@ export default {
         } else {
           previewhtml = '';
         }
-        console.log('previewhtml : ' + previewhtml);
 
         this.profilePreview = previewhtml;
       }
@@ -732,7 +790,7 @@ export default {
 
     fnNego: function () {
       //연봉협상
-      console.log('연봉협상 함수 안!!');
+
       let params = new URLSearchParams();
       let vm = this;
 
@@ -749,30 +807,29 @@ export default {
 
       if (this.pay_nego == 0) {
         //연봉 협상 테이블에 협상내역이 없을 때 insert
-        confirm('연봉을 입력 하시겠습니까?');
-        console.log('this.pay_nego : ' + this.pay_nego);
-        this.$vuecombiListAxios('/employee/insertNego.do', params).then(
-          function (res) {
-            console.log('IF 연봉 RESPONSE : ' + JSON.stringify(res));
-            vm.pay_nego = -1;
-            console.log('this.pay_nego  ' + vm.pay_nego);
-            if (res.data.result == 'SUCCESS') {
-              alert(res.data.resultMsg);
+        let result = confirm('연봉을 입력 하시겠습니까?');
+        if (result) {
+          this.$vuecombiListAxios('/employee/insertNego.do', params).then(
+            function (res) {
+              vm.pay_nego = -1;
+
+              if (res.data.result == 'SUCCESS') {
+                alert(res.data.resultMsg);
+              }
             }
-          }
-        );
+          );
+        }
       } else {
-        confirm('연봉을 수정 하시겠습니까?');
-        console.log('this.pay_nego : ' + vm.pay_nego);
-        console.log('this.year_pay : ' + vm.year_pay);
-        this.$vuecombiListAxios('/employee/updateNego.do', params).then(
-          function (res) {
-            console.log('ELSE 연봉 RESPONSE : ' + JSON.stringify(res));
-            if (res.data.result == 'SUCCESS') {
-              alert(res.data.resultMsg);
+        let result = confirm('연봉을 수정 하시겠습니까?');
+        if (result) {
+          this.$vuecombiListAxios('/employee/updateNego.do', params).then(
+            function (res) {
+              if (res.data.result == 'SUCCESS') {
+                alert(res.data.resultMsg);
+              }
             }
-          }
-        );
+          );
+        }
       }
     },
 
