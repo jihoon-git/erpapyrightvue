@@ -11,15 +11,14 @@
   <p style="text-align: right">
     기간&nbsp;
     <input type="date" v-model="srcdate" />
-    <a class="btnType blue" href="" @click.prevent="yearRevenue"
+    <a class="btnType blue" href="" @click.prevent="chartSearch"
       ><span>조회</span></a
     >
   </p>
 
-  <!-- 구글차트 to chart.js-->
-  <yyRevenueChart :srcdate="srcdate"></yyRevenueChart>
+  <!-- chart.js 컴포넌트-->
+  <yyRevenueChart :srcdate="srcdate" :key="key"></yyRevenueChart>
   <!--  -->
-  <div style="width: 900px; height: 500px"></div>
   <div class="yearSearchList">
     <table class="col">
       <caption>
@@ -53,7 +52,6 @@ export default {
   components: { yyRevenueChart: yyRevenueChart },
   data() {
     return {
-      //초기 년매출값
       srcdate: '',
       grouplist: [],
 
@@ -70,11 +68,13 @@ export default {
     };
   },
   created() {
-    this.srcdate = this.getToday();
+    //초기 년매출값
+    this.getToday();
   },
   mounted() {
     this.yearRevenue();
   },
+
   methods: {
     getToday: function () {
       var date = new Date();
@@ -85,13 +85,17 @@ export default {
       return year + '-' + month + '-' + day;
     },
 
+    chartSearch() {
+      //key 값이 변하면 yearRevenue 실행
+      this.key += 1;
+      this.yearRevenue();
+    },
     yearRevenue: function () {
-      //console.log('yearRevenue');
       let params = new URLSearchParams();
 
       params.append('srcdate', this.srcdate);
-      this.$vuecombiListAxios('/sales/vueYearRevenue.do', params).then(
-        (res) => {
+      this.$vuecombiListAxios('/sales/vueYearRevenue.do', params)
+        .then((res) => {
           this.html_head = '<th scope="col"></th>';
           this.html_body1 = '<td>당기순이익</td>';
           this.html_body2 = '<td>영업이익</td>';
@@ -182,9 +186,10 @@ export default {
                 '</td>';
             }
           }
-        }
-      );
-      console.log('ddddd' + this.srcdate);
+        })
+        .catch((err) => {
+          alert(err);
+        });
     },
   },
 };
