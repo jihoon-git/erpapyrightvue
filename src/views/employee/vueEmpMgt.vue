@@ -269,6 +269,9 @@ import { openModal } from 'jenesius-vue-modal';
 import ComCombo from '@/components/common/ComCombo.vue';
 import Paginate from 'vuejs-paginate-next';
 import vueEmpMgtDetModal from './vueEmpMgtDetModal.vue';
+import vueEmpMgtLeaveModal from './vueEmpMgtLeaveModal.vue';
+import vueEmpMgtRetireModal from './vueEmpMgtRetireModal.vue';
+import vueEmpMgtComebackModal from './vueEmpMgtComebackModal.vue';
 
 export default {
   data: function () {
@@ -357,8 +360,6 @@ export default {
       this.searchEmpMgt();
     },
     searchEmpMgt: function (cpage, statusCd) {
-      console.log('조회함수 안!!');
-
       this.cpage = cpage || 1;
       this.statusCd = statusCd || 'A';
       let params = new URLSearchParams();
@@ -421,8 +422,6 @@ export default {
       }
       this.$vuecombiListAxios('/employee/vueEmpMgtList.do', params).then(
         function (res) {
-          //console.log('params : ' + params);
-          //console.log('여기 return : ' + JSON.stringify(res));
           vm.empMgtList = res.data.empMgtList;
           vm.countEmpMgtList = res.data.countEmpMgtList;
           vm.totalPage = vm.$page(vm.countEmpMgtList, vm.pageSize);
@@ -436,7 +435,6 @@ export default {
       params.append('loginID', id);
       this.$vuecombiListAxios('/employee/empMgtDet.do', params).then(
         (response) => {
-          //console.log('response : ' + JSON.stringify(response));
           if (response.data.result == 'SUCCESS') {
             vm.empMgtDet = response.data.empMgtDet;
             this.detailModal(vm.empMgtDet);
@@ -446,13 +444,61 @@ export default {
     },
 
     detailModal: async function (loginID) {
-      console.log('디테일모달 함수 안!!!');
       const modal = await openModal(vueEmpMgtDetModal, {
         empMgtDetObj: loginID,
       });
 
       modal.onclose = () => {
-        this.searchEmpMgt(this.cpage);
+        this.searchEmpMgt(this.cpage, this.statusCd);
+      };
+    },
+
+    fModalLeaveEmp: async function (loginID, emp_no, name, st_date) {
+      //휴직모달
+
+      const modal = await openModal(vueEmpMgtLeaveModal, {
+        loginID: loginID,
+        emp_no: emp_no,
+        name: name,
+        st_date: st_date,
+      });
+
+      modal.onclose = () => {
+        this.searchEmpMgt(this.cpage, this.statusCd);
+      };
+    },
+
+    fModalRetireEmp: async function (loginID, emp_no, name, st_date) {
+      //퇴직모달
+
+      const modal = await openModal(vueEmpMgtRetireModal, {
+        loginID: loginID,
+        emp_no: emp_no,
+        name: name,
+        st_date: st_date,
+      });
+
+      modal.onclose = () => {
+        this.searchEmpMgt(this.cpage, this.statusCd);
+      };
+    },
+
+    fModalComebackEmp: async function (
+      loginID,
+      emp_no,
+      name,
+      lvst_date,
+      lved_date
+    ) {
+      const modal = await openModal(vueEmpMgtComebackModal, {
+        loginID: loginID,
+        emp_no: emp_no,
+        name: name,
+        lvst_date: lvst_date,
+        lved_date: lved_date,
+      });
+      modal.onclose = () => {
+        this.searchEmpMgt(this.cpage, this.statusCd);
       };
     },
   }, //methods-end
