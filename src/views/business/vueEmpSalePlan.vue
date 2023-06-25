@@ -31,40 +31,68 @@
         v-model="client_no"
         ref="Com_combo"
         style="margin-right: 3px"
-        :key="keys"
+        :key="keysC"
       ></clientSelectBox>
       날짜<input type="date" name="stdate" id="stdate" v-model="stdate" /> ~
       <input type="date" name="eddate" id="eddate" v-model="eddate" />
     </p>
     <p style="text-align: center">
       대분류
-      <select
-        name="lcategory"
-        id="lcategory"
-        v-model="lcategory"
-        @change="lcategorychange()"
-      ></select>
+
+      <ProLComCombo
+        group_code="lcategory_cd"
+        selectid="lcategory_cd"
+        type="all"
+        selvalue=""
+        eventid="ProLCombo"
+        v-model="lcategory_cd"
+        @change="ProLclick"
+        ref="Com_combo"
+        style="margin-right: 3px"
+        :key="keysL"
+        id="vLcategoryCd"
+      ></ProLComCombo>
       중분류
-      <select id="midchoice" v-model="midchoice" v-show="midchoiceflag">
-        <option value="">선택</option>
+
+      <ProMCombo
+        :lcategory_cd="lcategory_cd"
+        selectid="mcategory_cd"
+        type="all"
+        selvalue=""
+        eventid="ProMCombo"
+        v-model="mcategory_cd"
+        @change="ProMclick"
+        ref="Com_combo"
+        style="margin-right: 3px"
+        :key="keysM"
+        v-show="categorym"
+        id="vMcategoryCd"
+      ></ProMCombo>
+      <select name="selectl" id="selectl" v-show="selectl">
+        <option value="">대분류를 선택해주세요</option>
       </select>
-      <select
-        name="mcategory"
-        id="mcategory"
-        v-model="mcategory"
-        v-show="mcategoryflag"
-        @change="mcategorychange()"
-      ></select>
+
       제품
-      <select id="prodchoice" v-model="prodchoice" v-show="prodchoiceflag">
-        <option value="">선택</option>
+
+      <ProSCombo
+        :lcategory_cd="lcategory_cd"
+        :mcategory_cd="mcategory_cd"
+        selectid="product_name"
+        type="all"
+        selvalue=""
+        eventid="ProSCombo"
+        v-model="product_no"
+        @change="ProSclick"
+        ref="Com_combo"
+        style="margin-right: 3px"
+        :key="keysP"
+        v-show="productno"
+        id="vProductNo"
+      ></ProSCombo>
+      <select name="selectm" id="selectm" v-show="selectm">
+        <option value="">중분류를 선택해주세요</option>
       </select>
-      <select
-        name="productname"
-        id="productname"
-        v-model="productname"
-        v-show="productnameflag"
-      ></select>
+
       <a
         class="btnType blue"
         href=""
@@ -72,13 +100,6 @@
         id="listsearch"
         name="btn"
         ><span>조회</span></a
-      >
-      <a
-        class="btnType blue"
-        href="()"
-        @click.prevent="resetsearch()"
-        name="modal"
-        ><span>검색초기화</span></a
       >
     </p>
   </div>
@@ -158,13 +179,25 @@ import { openModal } from 'jenesius-vue-modal';
 import vueEmpSalePlanModal from './vueEmpSalePlanModal.vue';
 import Paginate from 'vuejs-paginate-next';
 import clientSelectBox from '@/components/common/clientSelectBox.vue';
+import ProLComCombo from '@/components/common/ProLComCombo.vue';
+import ProMCombo from '@/components/common/ProMCombo.vue';
+import ProSCombo from '@/components/common/ProSCombo.vue';
+
 export default {
   data: function () {
     return {
       grouplist: [],
       countempsaleplan: '',
-      client_no: '', //거래처 콤보박스
       searchKey: '',
+      group_code: 0,
+      client_no: 0,
+      clientName: '',
+
+      laccount_cd: '',
+      account_name: '',
+      lcategory_cd: '',
+      mcategory_cd: '',
+      product_no: '',
 
       client_name: '',
       stdate: '',
@@ -173,22 +206,36 @@ export default {
       mcategory: '',
       productname: '',
       midchoice: '',
-      midchoiceflag: '',
-      mcategoryflag: '',
-      prodchoice: '',
-      prodchoiceflag: '',
-      productnameflag: '',
+
+      selectl: true,
+      categorym: false,
+      selectm: true,
+      productno: false,
+      hidden_amt: true,
+      product_amt: false,
+
+      keysL: 0,
+      keysM: 0,
+      keysP: 0,
 
       pageSize: 5,
       pageBlockSize: 5,
       cpage: 0,
       totalPage: 1,
-      keys: 0,
+      keysC: 0,
     };
   },
   components: {
     clientSelectBox,
+    ProLComCombo,
+    ProMCombo,
+    ProSCombo,
     paginate: Paginate,
+  },
+  unmounted() {
+    this.emitter.off('ProLCombo');
+    this.emitter.off('ProMCombo');
+    this.emitter.off('ProSCombo');
   },
   mounted() {
     let vm = this;
@@ -197,31 +244,41 @@ export default {
     vm.loginID = loginInfo.loginId; //로그인 아이디
     vm.loginName = loginInfo.userNm; //로그인 이름
     vm.user_type = loginInfo.userType; //유저타입
+
     vm.listsearch();
   },
   methods: {
-    resetsearch: function () {
-      console.log(this.client_no);
-      console.log('검색 초기화 함수 안!!');
-      this.client_no = ''; //콤콤보 초기화
-      this.stdate = '';
-      this.eddate = '';
-      this.lcategory = '';
-      this.mcategory = '';
-      this.productname = '';
-      this.keys += 1; //고유값이 달라져서 component를 재실행함
+    ProLclick: function () {
+      this.emitter.emit('ProLCombo', this.lcategory_cd);
+      this.mcategory_cd = '';
+      this.product_no = '';
+      this.selectl = false;
+      this.categorym = true;
+      this.selectm = true;
+      this.productno = false;
+      this.keys += 1;
+      this.keysP += 1;
     },
-    fn_newplan: async function () {
-      //신규등록 버튼 눌렀을때
-      console.log('신규등록 버튼 눌렀다!!');
-      const modal = await openModal(vueEmpSalePlanModal, {
-        client: this.client,
-        product: this.product,
-        amount: this.amount,
-      });
-      modal.onclose = () => {
-        this.fn_searchKey();
-      };
+    ProMclick: function () {
+      this.emitter.emit('ProMCombo', this.mcategory_cd);
+      this.selectm = false;
+      this.productno = true;
+      this.hidden_amt = true;
+      this.product_amt = false;
+      this.product_no = '';
+      this.keysP += 1;
+    },
+
+    ProSclick: function () {
+      this.product_amt_model = '';
+      this.emitter.emit('ProSCombo', this.product_no);
+      if (this.product_no == '') {
+        this.hidden_amt = true;
+        this.product_amt = false;
+      } else {
+        this.hidden_amt = false;
+        this.product_amt = true;
+      }
     },
 
     fn_searchKey: function () {
@@ -245,16 +302,18 @@ export default {
       let params = new URLSearchParams();
       let vm = this;
 
-      params.append('pageSize', 5);
-      params.append('cpage', this.cpage);
-
       if (this.searchKey == 'Z') {
         params.append('stdate', this.stdate);
         params.append('eddate', this.eddate);
         params.append('clientname', this.client_no);
-        params.append('lcategory', this.lcategory);
-        params.append('mcategory', this.mcategory);
-        params.append('productname', this.productname);
+        params.append('lcategory', this.lcategory_cd);
+        params.append('mcategory', this.mcategory_cd);
+        params.append('productname', this.product_no);
+        params.append('pageSize', 5);
+        params.append('cpage', this.cpage);
+      } else {
+        params.append('pageSize', 5);
+        params.append('cpage', this.cpage);
       }
 
       this.$vuecombiListAxios('/business/vueEmpSalePlanlist.do', params).then(
@@ -266,6 +325,19 @@ export default {
           vm.totalPage = vm.$page(vm.countempsaleplan, vm.pageSize);
         }
       );
+    },
+
+    fn_newplan: async function () {
+      //신규등록 버튼 눌렀을때
+      console.log('신규등록 버튼 눌렀다!!');
+      const modal = await openModal(vueEmpSalePlanModal, {
+        client: this.client,
+        product: this.product,
+        amount: this.amount,
+      });
+      modal.onclose = () => {
+        this.fn_searchKey(this.cpage);
+      };
     },
   },
 };
