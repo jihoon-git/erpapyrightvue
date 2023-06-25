@@ -109,6 +109,7 @@ export default {
     ploginID: String,
     prmtn_name: String,
     dEmpNo: String,
+    rankname: String,
   },
   data: function () {
     return {
@@ -116,6 +117,7 @@ export default {
       mprmtn_date: '',
       mprmtn_name: '',
       prankCd: '',
+      prankname: '',
     };
   },
   components: {
@@ -128,13 +130,13 @@ export default {
     this.mloginID = this.ploginID;
     this.mprmtn_date = this.getToday();
     this.mprmtn_name = this.loginName;
+    this.prankname = this.rankname;
   },
   methods: {
     fn_save: function () {
       if (this.validationCheck()) {
         let saveparam = new URLSearchParams();
         saveparam.append('ploginID', this.mloginID);
-        // 사번을 넣어주세요 밑에
         saveparam.append('prmtnno', this.dEmpNo);
         saveparam.append('prmtn_name', this.mprmtn_name);
         saveparam.append('prankCd', this.mprankCd);
@@ -159,11 +161,17 @@ export default {
       return year + '-' + month + '-' + day;
     },
     validationCheck() {
+      console.log('text : ' + this.prankname);
       let checkEmpName = this.$checkNotEmpty([
         ['prankCd', '발령내용을 확인해 주세요'],
       ]);
       if (checkEmpName) {
-        return checkEmpName;
+        if (this.prankname == this.mprankCd) {
+          alert('같은 직급으로 승진할 수 없습니다.');
+          return false;
+        } else if (this.prankname != this.mprankCd) {
+          return true;
+        }
       }
     },
     close: function () {

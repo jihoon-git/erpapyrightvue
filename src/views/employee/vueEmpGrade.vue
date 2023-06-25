@@ -108,9 +108,13 @@
           <tr>
             <td>{{ list.emp_no }}</td>
             <td>
-              <a href="" @click.prevent="vuefn_detailempgrade(list.loginID)">{{
-                list.name
-              }}</a>
+              <a
+                href=""
+                @click.prevent="
+                  vuefn_detailempgrade(list.loginID, list.rank_cd)
+                "
+                >{{ list.name }}</a
+              >
             </td>
             <td>{{ list.deptname }}</td>
             <td>{{ list.rankname }}</td>
@@ -137,7 +141,11 @@
     </Paginate>
   </div>
   <br />
-  <vueEmpGradeDet v-if="btnSearch == 's'" :empNameDet="empId"></vueEmpGradeDet>
+  <vueEmpGradeDet
+    v-if="btnSearch == 's'"
+    :empNameDet="empId"
+    :rankname="rankname"
+  ></vueEmpGradeDet>
 </template>
 
 <script>
@@ -241,8 +249,9 @@ export default {
         }
       );
     },
-    vuefn_detailempgrade: function (loginID) {
+    vuefn_detailempgrade: function (loginID, rankname) {
       this.btnSearch = 's';
+      this.rankname = rankname;
       console.log('zzzzzzzzzzz : ' + this.btnSearch);
       this.empId = loginID;
       console.log('==================');
