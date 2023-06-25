@@ -26,7 +26,7 @@
         style="height: 25px"
         v-model="bpname"
       />
-      <a class="btnType blue" href="" @click.prevent="clientSearch(this.bpname)"
+      <a class="btnType blue" href="" @click.prevent="schPromotion"
         ><span>검색</span></a
       >
     </span>
@@ -92,7 +92,7 @@
       :page-count="totalPage"
       :page-range="5"
       :margin-pages="0"
-      :click-handler="clickCallback"
+      :click-handler="clientSearch"
       :prev-text="'Prev'"
       :next-text="'Next'"
       :container-class="'pagination'"
@@ -112,11 +112,14 @@ export default {
       BPclientlist: [],
 
       //pageinate 설정
-      currentPage: 1,
+      currentPage: 0,
       pageSize: 5,
       totalPage: 1,
       totalCnt: 0, //데이터갯수
       grdNo: 1,
+
+      searchKey: '',
+      bpname: '',
     };
   },
   mounted() {
@@ -127,82 +130,46 @@ export default {
     paginate: Paginate,
   },
   methods: {
+    schPromotion: function () {
+      this.searchKey = '';
+      this.searchKey = 'Z';
+      this.clientSearch();
+    },
     //초기 화면
-    clientSearch: function (bpname) {
+    clientSearch: function (currentPage) {
       let vm = this;
       let params = new URLSearchParams();
+      this.currentPage = currentPage || 1;
 
       //'거래처명을입력해 주세요.'에 검색이 없을때
-      if (bpname == null) {
+      if (this.searchKey == 'Z') {
         params.append('pageSize', this.pageSize);
         params.append('cpage', this.currentPage);
-
-        this.$vuecombiListAxios('/business/clientlistvue.do', params).then(
-          function (response) {
-            console.log('clientSearch response' + JSON.stringify(response));
-            //paginate 설정
-            vm.totalCnt = response.data.countclientlist;
-            //거래처리스트 받기
-            vm.BPclientlist = response.data.clientlist;
-            //page를 전역변수 사용
-            vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
-            //vm.totalPage = vm.page();
-
-            vm.currentPage == 1
-              ? (vm.grdNo = 1)
-              : (vm.grdNo = 5 * (vm.currentPage - 1) + 1);
-
-            for (let value of vm.BPclientlist) {
-              value.indexNew = vm.grdNo++;
-            }
-          }
-        );
+        if (this.bpname != null) {
+          params.append('bpname', this.bpname);
+        }
       } else {
-        params.append('bpname', bpname);
         params.append('pageSize', this.pageSize);
         params.append('cpage', this.currentPage);
-
-        this.$vuecombiListAxios('/business/clientlistvue.do', params).then(
-          function (response) {
-            console.log('clientSearch response' + JSON.stringify(response));
-            //paginate 설정
-            vm.totalCnt = response.data.countclientlist;
-            //거래처리스트 받기
-            vm.BPclientlist = response.data.clientlist;
-            //page를 전역변수 사용
-            vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
-            //vm.totalPage = vm.page();
-
-            vm.currentPage == 1
-              ? (vm.grdNo = 1)
-              : (vm.grdNo = 5 * (vm.currentPage - 1) + 1);
-
-            for (let value of vm.BPclientlist) {
-              value.indexNew = vm.grdNo++;
-            }
-          }
-        );
       }
-    },
-    //전역변수로 page 설정. 데이터를 page로 나눠주는 역할. 이미 설정
-    //paginate callback
-    clickCallback: function (pageNum) {
-      console.log(pageNum);
-
-      this.currentPage = pageNum;
-      //this.Paginate.pageNum = 10;
-      this.clientSearch();
+      this.$vuecombiListAxios('/business/clientlistvue.do', params).then(
+        function (response) {
+          //paginate 설정
+          vm.totalCnt = response.data.countclientlist;
+          vm.BPclientlist = response.data.clientlist;
+          //page를 전역변수 사용
+          vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
+        }
+      );
     },
 
     //거래처등록
     newBizPartner: async function () {
       const modal = await openModal(vueBizPartnerModalVue, {
-        //vueProductCodeModal의 saveModal에 action값 넘김
         saveModalAction: 'I',
-      }); //상세보기 클릭은 값을 넘겨야함.
+      });
 
       modal.onclose = () => {
-        console.log('Close : ');
         this.clientSearch();
       };
     },
@@ -210,13 +177,11 @@ export default {
     //상세페이지
     bizPartnerDetailClient: async function (client_no) {
       const modal = await openModal(vueBizPartnerModalVue, {
-        //vueProductCodeModal의 saveModal에 detail_code 값, action 값 넘김)
         sendClientNo: client_no,
         saveModalAction: 'U',
-      }); //상세보기 클릭은 값을 넘겨야함.
-      console.log('bizPartnerDetailClient client_no ' + client_no);
+      });
+
       modal.onclose = () => {
-        console.log('Close : ');
         this.clientSearch();
       };
     },

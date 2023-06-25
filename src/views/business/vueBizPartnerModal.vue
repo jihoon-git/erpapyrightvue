@@ -222,7 +222,9 @@ export default {
     console.log('created receiveClientNo ' + this.receiveClientNo);
   },
   mounted() {
-    this.modalDetail();
+    if (this.receiveAction == 'U') {
+      this.modalDetail();
+    }
   },
 
   methods: {
@@ -327,7 +329,7 @@ export default {
         });
         return false;
       } else if (!hpRules.test(this.det_manager_hp)) {
-      /*       else if (!addrRules.test(this.det_zip_code)) {
+        /*       else if (!addrRules.test(this.det_zip_code)) {
         alert('우편번호를 확인해주세요.(숫자 5글자 입니다.)').then(function () {
           this.$refs.det_zip_code.focus();
           //$('#det_zip_code').focus();
