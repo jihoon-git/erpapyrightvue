@@ -92,7 +92,7 @@
             <td>{{ list.lcategory_name }}</td>
             <td>{{ list.mcategory_name }}</td>
             <td>{{ list.product_name }}</td>
-            <td>{{ list.price }}원</td>
+            <td>{{ $comma(list.price) }}원</td>
             <td>{{ list.stock }}EA</td>
             <td style="display: flex">
               <input

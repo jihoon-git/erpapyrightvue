@@ -97,7 +97,7 @@
           <tr>
             <th scope="row">매출</th>
             <td v-for="(list, item) in mmRevenuelist1" :key="item">
-              {{ list.outgo }}
+              {{ $comma(list.outgo) }}
             </td>
           </tr>
           <tr>

@@ -128,7 +128,7 @@ export default {
     let loginInfo = this.$store.state.loginInfo;
     this.loginName = loginInfo.userNm; //로그인 이름
     this.mloginID = this.ploginID;
-    this.mprmtn_date = this.getToday();
+    this.mprmtn_date = this.$getToday();
     this.mprmtn_name = this.loginName;
     this.prankname = this.rankname;
   },
@@ -152,14 +152,7 @@ export default {
         );
       }
     },
-    getToday: function () {
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = ('0' + (1 + date.getMonth())).slice(-2);
-      var day = ('0' + date.getDate()).slice(-2);
 
-      return year + '-' + month + '-' + day;
-    },
     validationCheck() {
       console.log('text : ' + this.prankname);
       let checkEmpName = this.$checkNotEmpty([
