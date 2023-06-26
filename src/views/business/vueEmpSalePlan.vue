@@ -336,7 +336,7 @@ export default {
         amount: this.amount,
       });
       modal.onclose = () => {
-        this.fn_searchKey(this.cpage);
+        this.listsearch(this.cpage);
       };
     },
   },
