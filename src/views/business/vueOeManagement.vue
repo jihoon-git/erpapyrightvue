@@ -201,7 +201,6 @@ export default {
       }
       this.$vuecombiListAxios('/business/vueOeManagementList.do', params).then(
         function (res) {
-          console.log('return : ' + JSON.stringify(res));
           vm.oEManagementList = res.data.oEManagementList;
           vm.totalCnt = res.data.totalCnt;
           vm.totalPage = vm.$page(vm.totalCnt, vm.pageSize);
@@ -215,9 +214,8 @@ export default {
       let vm = this;
       this.$vuecombiListAxios('/business/contractDetaile.do', params).then(
         (response) => {
-          console.log('여기확인: ' + JSON.stringify(response));
           vm.estimate_cd = response.data.contractDetaile[0].estimate_cd;
-          console.log('vm.estimate_cd :' + vm.estimate_cd);
+
           this.insertModal();
         }
       );
@@ -239,14 +237,10 @@ export default {
     },
 
     fn_contractDetaile: async function (order_cd, product_no) {
-      console.log('여기 order_cd : ' + order_cd);
-      console.log(' 여기 product_no' + product_no);
       const modal = await openModal(vueOeManagementDetModalVue, {
         Morder_cd: order_cd,
         Mproduct_no: product_no,
       });
-      console.log('order_cd:' + order_cd);
-      console.log('product_no:' + product_no);
 
       modal.onclose = () => {
         this.oEManagemenSearch(this.cpage);

@@ -257,13 +257,11 @@ export default {
         params.append('product', this.product_no);
         params.append('amount', this.product_amt_model);
         params.append('loginID', this.loginID);
-        params.append('plandate', this.getToday());
+        params.append('plandate', this.$getToday());
         params.append('goaldate', this.nextmonthToday());
 
         this.$vuecombiListAxios('/business/newempsaleplan.do', params).then(
           function (response) {
-            console.log('params :' + params);
-            console.log('저장 RESPONSE: ' + JSON.stringify(response));
             if (response.data.RESULT == 'SUCCESS') {
               alert('저장 되었습니다.');
               vm.close();
@@ -276,14 +274,6 @@ export default {
     }, //fn_saveend
 
     /** 오늘 날짜 */
-    getToday: function () {
-      let date = new Date();
-      let year = date.getFullYear();
-      let month = ('0' + (1 + date.getMonth())).slice(-2);
-      let day = ('0' + date.getDate()).slice(-2);
-
-      return year + '-' + month + '-' + day;
-    },
 
     /** 오늘 날짜에서 한달만 더한 값 */
     nextmonthToday: function () {

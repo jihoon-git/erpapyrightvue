@@ -82,13 +82,11 @@ export default {
   },
   methods: {
     fn_rejectDetail: function () {
-      console.log('반려사유 상세보기');
       let vm = this;
       let params = new URLSearchParams();
       params.append('atd_no', vm.atd_no);
       this.$vuecombiListAxios('employee/rest_reject.do', params)
         .then(function (response) {
-          //console.log('response : ' + JSON.stringify(response));
           vm.atd_name = response.data.rest_reject.atd_name;
           vm.reject_rsn = response.data.rest_reject.reject_rsn;
         })
