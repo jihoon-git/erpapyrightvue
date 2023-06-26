@@ -11,10 +11,7 @@
       <span class="fr">
         부서명
         <input type="text" v-model="srcdept" />
-        <a
-          class="btnType blue"
-          href=""
-          @click.prevent="searchDept(this.srcdept)"
+        <a class="btnType blue" href="" @click.prevent="searchDept()"
           ><span>검색</span>
         </a>
       </span>
@@ -108,18 +105,18 @@ export default {
 
   methods: {
     //화면초기
-    searchDept: function (currentPage, srcdept) {
+    searchDept: function (currentPage) {
       let vm = this;
       let params = new URLSearchParams();
 
       this.currentPage = currentPage || 1;
 
-      if (srcdept == null) {
+      if (this.srcdept == null) {
         params.append('cpage', this.currentPage);
         params.append('pageSize', this.pageSize);
       } else {
-        params.append('srcdept', this.srcdept),
-          params.append('cpage', this.currentPage);
+        params.append('srcdept', this.srcdept);
+        params.append('cpage', this.currentPage);
         params.append('pageSize', this.pageSize);
       }
 
@@ -176,7 +173,7 @@ export default {
 
       modal.onclose = () => {
         //console.log('Close : ');
-        this.searchDept();
+        this.searchDept(this.currentPage);
       };
     },
     // 부서관리 초기화면에서 요소(부서명)를 클릭하면 상세조회
@@ -188,9 +185,7 @@ export default {
       }); //상세보기 클릭은 값을 넘겨야함.
 
       modal.onclose = () => {
-        //console.log('Close : ');
-        //this.currentPage = 1;
-        this.searchDept();
+        this.searchDept(this.currentPage);
       };
     },
   },

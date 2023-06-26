@@ -240,14 +240,6 @@ export default {
   },
 
   methods: {
-    getToday: function () {
-      let date = new Date();
-      let year = date.getFullYear();
-      let month = ('0' + (1 + date.getMonth())).slice(-2);
-      let day = ('0' + date.getDate()).slice(-2);
-
-      return year + '-' + month + '-' + day;
-    },
     btnEmpClick: function () {
       const empnamecheck = this.$checkEmpName(this.srcName);
       if (!empnamecheck) {
@@ -312,7 +304,7 @@ export default {
         this.sloginID = sloginID;
         this.salary_no = salary_no;
         this.exp_no = exp_no;
-        this.today = this.getToday();
+        this.today = this.$getToday();
         this.fn_onesave();
       }
     },

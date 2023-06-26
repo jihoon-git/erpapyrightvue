@@ -173,7 +173,7 @@ import vueDdRevenueProduct from './vueDdRevenueProduct.vue';
 
 export default {
   created() {
-    this.searchDate = this.getToday();
+    this.searchDate = this.$getToday();
     this.getMontago();
     console.log('this.searchDate ' + this.searchDate);
     console.log('this.oneMonthAgo ' + this.oneMonthAgo);
@@ -220,7 +220,7 @@ export default {
   methods: {
     //오늘 날짜 입력
     fn_searchDdRev: function () {
-      this.searchDate = this.getToday();
+      this.searchDate = this.$getToday();
       this.getMontago();
       this.searchDdRev();
     },
@@ -241,14 +241,6 @@ export default {
       this.oneMonthAgo = this.getFormatDate(oneMonthAgo_);
     },
 
-    getToday: function () {
-      let date = new Date();
-      let year = date.getFullYear();
-      let month = ('0' + (1 + date.getMonth())).slice(-2);
-      let day = ('0' + date.getDate()).slice(-2);
-
-      return year + '-' + month + '-' + day;
-    },
     btnSearch: function () {
       this.src = 'S';
       this.key += 1;
