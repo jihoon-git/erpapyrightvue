@@ -191,22 +191,12 @@ export default {
         this.ed_date = '';
         return false;
       }
-      //this.searchKey = 'Z';
-      //this.modalSave();
+
       this.checkToday();
     },
 
-    getToday: function () {
-      let date = new Date();
-      let year = date.getFullYear();
-      let month = ('0' + (1 + date.getMonth())).slice(-2);
-      let day = ('0' + date.getDate()).slice(-2);
-
-      return year + '-' + month + '-' + day;
-    },
-
     checkToday: function () {
-      if (this.st_date < this.getToday()) {
+      if (this.st_date < this.$getToday()) {
         alert('신청 날짜가 오늘 이전이 될 수 없습니다.');
         return false;
       }

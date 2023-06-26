@@ -297,7 +297,6 @@ export default {
     },
 
     listsearch: function (cpage) {
-      console.log('검색함수 안!!!');
       this.cpage = cpage || 1;
       let params = new URLSearchParams();
       let vm = this;
@@ -318,8 +317,6 @@ export default {
 
       this.$vuecombiListAxios('/business/vueEmpSalePlanlist.do', params).then(
         function (res) {
-          console.log('===============' + params);
-          console.log('조회함수 안 RES :' + JSON.stringify(res));
           vm.grouplist = res.data.vueEmpSalePlanlist;
           vm.countempsaleplan = res.data.countempsaleplan;
           vm.totalPage = vm.$page(vm.countempsaleplan, vm.pageSize);
@@ -329,7 +326,7 @@ export default {
 
     fn_newplan: async function () {
       //신규등록 버튼 눌렀을때
-      console.log('신규등록 버튼 눌렀다!!');
+
       const modal = await openModal(vueEmpSalePlanModal, {
         client: this.client,
         product: this.product,

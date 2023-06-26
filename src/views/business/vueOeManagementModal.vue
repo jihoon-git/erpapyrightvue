@@ -141,19 +141,12 @@ export default {
   },
   methods: {
     estimateDetaile2: function () {
-      console.log('견적서가 있을 경우 상세조회');
       let params = new URLSearchParams();
-      console.log('this.estDetaile) : ' + this.estDetaile);
       params.append('estimate_cd', this.estDetaile);
       //let vm = this;
       this.$vuecombiListAxios('/business/contractDetaile.do', params).then(
         (response) => {
-          console.log(
-            '견적서있을경우 상세조회 RESPONSE: ' + JSON.stringify(response)
-          );
           this.estlist = response.data.contractDetaile;
-          console.log('this.estlist : ' + JSON.stringify(this.estlist));
-          console.log('client_name : ' + JSON.stringify(this.estlist));
         }
       );
       params.append('contractType', 1);
@@ -166,14 +159,13 @@ export default {
 
     orderSaveBtn: function () {
       let params = new URLSearchParams();
-      console.log('등록버튼을 눌렀을 때!!!');
       if (this.estimateNumList.length == 0) {
         alert('견적서가 존재하지 않습니다.');
       } else if (this.estDetaile == '') {
         alert('견적서를 선택해주세요');
       } else {
         params.append('estimate_cd', this.estDetaile);
-        console.log('여기까지 왔다');
+
         this.$vuecombiListAxios('/business/contractDetaile.do', params).then(
           (response) => {
             let arm = '';
@@ -201,10 +193,8 @@ export default {
     },
     orderSave: function (Object) {
       let vm = this;
-      console.log('저장함수 안!!!');
-      console.log(JSON.stringify(Object));
+
       for (let i = 0; i < Object.length; i++) {
-        console.log('param 안에 접근' + Object.length);
         let params = new URLSearchParams();
         params.append('estimate_cd', Object[i].estimate_cd);
         params.append('contract_no', Object[i].contract_no);
@@ -215,21 +205,11 @@ export default {
         params.append('productAmtVal', Object[i].product_amt);
         params.append('index', Object.length);
         params.append('price', Object[i].price);
-        console.log(params);
-        console.log('estimate_cd :' + Object[i].estimate_cd);
-        console.log('contract_no :' + Object[i].contract_no);
-        console.log('client_no :' + Object[i].client_no);
-        console.log('lproduct_cd :' + Object[i].lproduct_cd);
-        console.log('mproduct_cd :' + Object[i].mproduct_cd);
-        console.log('product_no :' + Object[i].product_no);
-        console.log('product_amt :' + Object[i].product_amt);
-        console.log('price :' + Object[i].price);
+
         this.$vuecombiListAxios('/business/contractSave.do', params).then(
           (response) => {
-            console.log('저장함수안 RESPONSE : ' + JSON.stringify(response));
             vm.index += parseInt(i) + 1;
             this.src = response.data.contractDetaile;
-            console.log(vm.index);
           }
         );
       }
