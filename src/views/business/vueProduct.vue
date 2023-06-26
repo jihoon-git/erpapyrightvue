@@ -229,12 +229,15 @@ export default {
       let param = new URLSearchParams();
       let vm = this;
       this.cpage = cpage || 1;
-      param.append('pageSize', this.pageSize);
-      param.append('cpage', this.cpage);
-      param.append('lcategory_cd', '');
-      if (this.searchKey == 'Z') {
+      if (this.searchKey != 'Z') {
+        param.append('pageSize', this.pageSize);
+        param.append('cpage', this.cpage);
+        param.append('lcategory_cd', '');
+      } else if (this.searchKey == 'Z') {
         param.append('lcategory_cd', this.lcategory_cd);
         param.append('mcategory_cd', this.mcategory_cd);
+        param.append('pageSize', this.pageSize);
+        param.append('cpage', this.cpage);
       }
 
       this.$vuecombiListAxios('/business/vueProductList.do', param).then(
