@@ -197,7 +197,7 @@
   <div id="resPagination">
     <Paginate
       class="justify-content-center"
-      v-model="cPage"
+      v-model="cpage"
       :page-count="totalPage"
       :page-range="5"
       :margin-pages="0"
@@ -244,6 +244,7 @@ export default {
       totalPage: 1,
       cpage: 1,
       key: '',
+      searchKey: '',
     };
   },
   components: {
@@ -269,25 +270,33 @@ export default {
   },
   methods: {
     searchPlan: function () {
+      this.searchKey = '';
       const empnamecheck = this.$checkEmpName(this.empname);
       if (!empnamecheck) {
         this.empname = '';
         return false;
       }
-
+      this.searchKey = 'Z';
       this.allBmSalePlanList();
     },
     allBmSalePlanList: function (cpage) {
-      this.cpage = cpage || 1;
       let param = new URLSearchParams();
       let vm = this;
-      param.append('empname', this.empname);
-      param.append('searchdate', this.scsearchdate);
-      param.append('lcategory', this.lcategory_cd);
-      param.append('mcategory', this.mcategory_cd);
-      param.append('productname', this.product_no);
-      param.append('pageSize', this.pageSize);
-      param.append('cpage', this.cpage);
+
+      this.cpage = cpage || 1;
+      if (this.searchKey == 'Z') {
+        param.append('empname', this.empname);
+        param.append('searchdate', this.scsearchdate);
+        param.append('lcategory', this.lcategory_cd);
+        param.append('mcategory', this.mcategory_cd);
+        param.append('productname', this.product_no);
+        param.append('pageSize', this.pageSize);
+        param.append('cpage', this.cpage);
+      } else {
+        param.append('pageSize', this.pageSize);
+        param.append('cpage', this.cpage);
+      }
+
       this.$vuecombiListAxios('/business/vueBmsaleplanlist.do', param).then(
         function (res) {
           console.log('=============' + param);

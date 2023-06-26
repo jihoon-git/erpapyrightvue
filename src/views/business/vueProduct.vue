@@ -37,7 +37,7 @@
         id="btnSaveDtlCod"
         name="btn"
         href=""
-        @click.prevent="productSearch()"
+        @click.prevent="searchList()"
         ><span>조회</span></a
       >
     </span>
@@ -139,6 +139,7 @@ import { openModal } from 'jenesius-vue-modal';
 import vueProductModal from './vueProductModal.vue';
 import ProLComCombo from '@/components/common/ProLComCombo.vue';
 import ProMCombo from '@/components/common/ProMCombo.vue';
+
 export default {
   data: function () {
     return {
@@ -215,19 +216,27 @@ export default {
     vm.loginID = loginInfo.loginId; //로그인 아이디
     vm.loginName = loginInfo.userNm; //로그인 이름
     vm.userType = loginInfo.userType; //유저타입
+    console.log('this.searchKey1 ' + this.searchKey);
     vm.productSearch();
   },
   methods: {
+    searchList: function () {
+      this.searchKey = 'Z';
+      this.productSearch();
+    },
+
     productSearch: function (cpage) {
+      let param = new URLSearchParams();
       let vm = this;
       this.cpage = cpage || 1;
-
-      let param = new URLSearchParams();
-      console.log(this.cpage);
       param.append('pageSize', this.pageSize);
       param.append('cpage', this.cpage);
-      param.append('lcategory_cd', this.lcategory_cd);
-      param.append('mcategory_cd', this.mcategory_cd);
+      param.append('lcategory_cd', '');
+      if (this.searchKey == 'Z') {
+        param.append('lcategory_cd', this.lcategory_cd);
+        param.append('mcategory_cd', this.mcategory_cd);
+      }
+
       this.$vuecombiListAxios('/business/vueProductList.do', param).then(
         function (res) {
           console.log('res : ' + JSON.stringify(res));
