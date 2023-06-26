@@ -119,6 +119,18 @@ const methods = {
     }
     return true;
   },
+  /**
+   *
+   * @returns year + '-' + month + '-' + day
+   */
+  getToday: function () {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = ('0' + (1 + date.getMonth())).slice(-2);
+    var day = ('0' + date.getDate()).slice(-2);
+
+    return year + '-' + month + '-' + day;
+  },
 };
 
 export default {
@@ -130,5 +142,6 @@ export default {
     Vue.config.globalProperties.$checkEmpNumber = methods.checkEmpNumber;
     Vue.config.globalProperties.$checkEmpName = methods.checkEmpName;
     Vue.config.globalProperties.$checkNotEmpty = methods.checkNotEmpty;
+    Vue.config.globalProperties.$getToday = methods.getToday;
   },
 };
