@@ -118,15 +118,6 @@ export default {
     paginate: Paginate,
   },
   methods: {
-    getToday: function () {
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = ('0' + (1 + date.getMonth())).slice(-2);
-      var day = ('0' + date.getDate()).slice(-2);
-
-      return year + '-' + month + '-' + day;
-    },
-
     //검색 클릭시
     schPromotion: function () {
       this.searchKey = '';
@@ -180,7 +171,7 @@ export default {
         receiveAction: 'I',
         receiveObject: {
           writer: this.$store.state.loginInfo.loginId,
-          today: this.getToday(),
+          today: this.$getToday(),
         },
       });
       modal.onclose = () => {

@@ -69,22 +69,13 @@ export default {
   },
   created() {
     //초기 년매출값
-    this.getToday();
+    this.$getToday();
   },
   mounted() {
     this.yearRevenue();
   },
 
   methods: {
-    getToday: function () {
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = ('0' + (1 + date.getMonth())).slice(-2);
-      var day = ('0' + date.getDate()).slice(-2);
-
-      return year + '-' + month + '-' + day;
-    },
-
     chartSearch() {
       //key 값이 변하면 yearRevenue 실행
       this.key += 1;
