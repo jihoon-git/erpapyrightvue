@@ -164,12 +164,23 @@
           >
             <tr>
               <td>
-                <a href="" @click.prevent="fn_detailexpense(item.exp_no)">{{
-                  item.exp_no
-                }}</a>
+                <a
+                  href=""
+                  @click.prevent="
+                    fn_detailexpense(
+                      item.exp_no,
+                      item.exp_yn,
+                      item.loginID,
+                      'U'
+                    )
+                  "
+                  >{{ item.exp_no }}</a
+                >
               </td>
-              <td>{{ item.loginID }}</td>
-              <td>{{ item.name }}</td>
+              <template v-if="bmUserType == 'B' || bmUserType == 'C'">
+                <td>{{ item.loginID }}</td>
+                <td>{{ item.name }}</td>
+              </template>
               <td>{{ item.detail_name }}</td>
               <td>{{ item.account_name }}</td>
               <td>{{ item.exp_date }}</td>
@@ -178,12 +189,22 @@
               <td v-if="item.exp_yn == 'Y'">승인</td>
               <td v-else-if="item.exp_yn == 'N'">반려</td>
               <td v-else>
-                <a
-                  class="btnType blue"
-                  href=""
-                  @click.prevent="fn_expenseapproval(item.exp_no)"
-                  ><span>대기</span></a
-                >
+                <template v-if="bmUserType == 'B' || bmUserType == 'C'">
+                  <a
+                    class="btnType blue"
+                    href=""
+                    @click.prevent="
+                      fn_detailexpense(
+                        item.exp_no,
+                        item.exp_yn,
+                        item.loginID,
+                        'A'
+                      )
+                    "
+                    ><span>대기</span></a
+                  >
+                </template>
+                <template v-else> 대기 </template>
               </td>
               <td>{{ item.yn_date }}</td>
               <td>{{ item.exp_name }}</td>
@@ -213,11 +234,14 @@
 import Paginate from 'vuejs-paginate-next';
 import ComCombo from '@/components/common/ComCombo.vue';
 import detileAccount from '@/components/common/detileAccount.vue';
+import { openModal } from 'jenesius-vue-modal';
+import vueBmDvModal from './vueBmDvModal.vue';
 export default {
   data() {
     return {
       bmUserType: '',
       bmLoginId: '',
+      bmLoginNm: '',
 
       cpage: 1,
       pageSize: 5,
@@ -243,6 +267,14 @@ export default {
       testVal: 0,
       account_cd: '',
       keys: 0,
+      rExpNo: '',
+
+      // 상세조회시 보내는 값들
+      detExpyn: '',
+      ynFlag: false,
+      myExpFlag: false,
+      rAction: '',
+      rDisabledFlag: false,
     };
   },
   components: {
@@ -252,6 +284,8 @@ export default {
   },
   created() {
     this.bmUserType = this.$store.state.loginInfo.userType;
+    this.bmLoginId = this.$store.state.loginInfo.loginId;
+    this.bmLoginNm = this.$store.state.loginInfo.userNm;
   },
   unmounted() {
     this.emitter.off('ComboEvent');
@@ -287,6 +321,9 @@ export default {
       let params = new URLSearchParams();
       params.append('pageSize', this.pageSize);
       params.append('cpage', this.cpage);
+      if (this.bmUserType == 'D') {
+        params.append('loginID', this.bmLoginId);
+      }
       // 검색버튼을 눌러서 리스트를 출력하는 경우
       // 파라미터 값으로 검색 조건들을 함께 담아서 보냄
       if (this.searchKey == 'Z') {
@@ -295,8 +332,10 @@ export default {
         params.append('actcd', this.account_cd);
         params.append('lctcd', this.laccount_cd);
         params.append('expyn', this.expyn);
-        params.append('loginID', this.bmLoginId);
-        params.append('searchname', this.searchname);
+
+        if (this.bmUserType == 'B' || this.bmUserType == 'C') {
+          params.append('searchname', this.searchname);
+        }
       }
 
       this.$vuecombiListAxios('/accounting/vueExpenselist.do', params)
@@ -317,6 +356,66 @@ export default {
     },
     ComboChange: function () {
       this.emitter.emit('detailCombo', this.account_cd);
+    },
+    fn_openpopup: async function () {
+      const modal = await openModal(vueBmDvModal, {
+        receiveAction: 'I',
+        receiveObject: {
+          userId: this.bmLoginId,
+          userNm: this.bmLoginNm,
+          today: this.$getToday(),
+          rDisabledFlag: true,
+        },
+      });
+      modal.onclose = () => {
+        this.searchBmDv();
+      };
+    },
+    //상세페이지 보기
+    fn_detailexpense: async function (exp_no, exp_yn, loginID, rAction) {
+      // 승인or반려면 false , 승인대기면 true
+      // 승인대기면 승인 반려 처리가 가능함
+      if (exp_yn == 'Y' || exp_yn == 'N') {
+        this.ynFlag = false;
+      } else {
+        this.ynFlag = true;
+      }
+
+      // 작성자와 로그인유저아이디가 동일하면 true
+      // 승인 & 반려 못함
+      if (loginID == this.bmLoginId) {
+        this.myExpFlag = true;
+      } else {
+        this.myExpFlag = false;
+      }
+
+      if (rAction == 'U') {
+        this.rAction = 'U';
+      } else if (rAction == 'A') {
+        this.rAction = 'A';
+      }
+
+      // 지출결의서 기본정보 수정 가능 유무
+      if (this.myExpFlag && this.ynFlag && this.rAction == 'U') {
+        this.rDisabledFlag = true;
+      } else {
+        this.rDisabledFlag = false;
+      }
+
+      const modal = await openModal(vueBmDvModal, {
+        receiveAction: this.rAction,
+        receiveObject: {
+          rExpNo: exp_no, // 지출결의번호
+          rExpYn: exp_yn, // 승인반려여부
+          //rWriterId: loginID, // 작성자아이디
+          myExpFlag: this.myExpFlag,
+          ynFlag: this.ynFlag,
+          rDisabledFlag: this.rDisabledFlag,
+        },
+      });
+      modal.onclose = () => {
+        this.searchBmDv(this.cpage);
+      };
     },
   },
 };
