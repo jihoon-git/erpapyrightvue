@@ -96,7 +96,7 @@
             <td>{{ list.stock }}EA</td>
             <td style="display: flex">
               <input
-                type="text"
+                type="number"
                 id="addStock[index]"
                 name="addStock"
                 v-model="addStock[index]"
@@ -259,8 +259,9 @@ export default {
         (res) => {
           alert('추가되었습니다!');
           vm.addstock = res.data.addStock;
-          vm.addStock = [];
+
           vm.productSearch();
+          vm.addStock = [];
         }
       );
     },
