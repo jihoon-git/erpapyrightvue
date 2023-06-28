@@ -96,7 +96,7 @@
             <td>{{ list.stock }}EA</td>
             <td style="display: flex">
               <input
-                type="text"
+                type="number"
                 id="addStock[index]"
                 name="addStock"
                 v-model="addStock[index]"
